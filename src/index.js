@@ -25,6 +25,9 @@ import "assets/scss/argon-dashboard-react.scss";
 
 import AdminLayout from "layouts/Admin.js";
 import AuthLayout from "layouts/Auth.js";
+import Index from "views/Index";
+import Login from "views/examples/Login";
+import Register from "views/examples/Register";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -32,7 +35,11 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/admin/*" element={<AdminLayout />} />
+      <Route path="/dashboard" element={<Index />} />
       <Route path="/auth/*" element={<AuthLayout />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register/>} />
+
       <Route path="*" element={<Navigate to="/admin/index" replace />} />
     </Routes>
   </BrowserRouter>

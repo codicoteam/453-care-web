@@ -23,6 +23,11 @@ import {
   Navbar,
   NavItem,
   NavLink,
+  FormGroup,
+  Input,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
   Nav,
   Container,
   Row,
@@ -32,13 +37,33 @@ import {
 const AdminNavbar = () => {
   return (
     <>
-      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
-        <Container className="px-4">
+      <Navbar
+        className="navbar-top navbar-horizontal navbar-dark w-100  mt-4 border bg-white   border-gray-200 my-4"
+        expand="md"
+        style={{ boxShadow: "0 4px 6px rgba(255, 255, 255, 0.5)" }}
+      >
+        <Container fluid className="px-4">
+          {" "}
+          {/* Use `fluid` for full-width container */}
           <NavbarBrand to="/" tag={Link}>
-            <img
+            <a
+              className="avatar avatar-lg"
+              href="#pablo"
+              id="tooltip742438047"
+              onClick={(e) => e.preventDefault()}
+            >
+              <img
+                alt="..."
+                className="rounded-circle"
+                src={require("../../assets/img/brand/logoHtc.jpeg")}
+              />
+            </a>
+
+            {/* <img
               alt="..."
-              src={require("../../assets/img/brand/argon-react-white.png")}
-            />
+              src={require("../../assets/img/brand/logoHtc.jpeg")}
+              style={{ width: "70px", height: "50px" }}
+            /> */}
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
@@ -50,7 +75,7 @@ const AdminNavbar = () => {
                   <Link to="/">
                     <img
                       alt="..."
-                      src={require("../../assets/img/brand/argon-react.png")}
+                      src={require("../../assets/img/brand/logoHtc.jpeg")}
                     />
                   </Link>
                 </Col>
@@ -62,39 +87,155 @@ const AdminNavbar = () => {
                 </Col>
               </Row>
             </div>
-            <Nav className="ml-auto" navbar>
+            <Nav className="ml-auto align-items-center d-flex" navbar>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/" tag={Link}>
-                  <i className="ni ni-planet" />
-                  <span className="nav-link-inner--text">Dashboard</span>
+                <NavLink className="nav-link-icon" to="/auth/mydashboard" tag={Link}>
+                  <i
+                    className="fas fa-tachometer-alt text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="font-bold text-indigo-500 text-2xl "
+                    style={{ color: "blue" }}
+                  >
+                    Dashboard
+                  </span>
+                </NavLink>
+              </NavItem>
+
+              <NavItem>
+                <NavLink
+                  className="nav-link-icon"
+                  to="/auth/mycarer"
+                  tag={Link}
+                >
+                  <i
+                    className="fas fa-user-friends text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Carers
+                  </span>
                 </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink
-                  className="nav-link-icon"
-                  to="/auth/register"
+                  className="nav-link-icon text-2xl"
+                  to="/auth/myclient"
                   tag={Link}
                 >
-                  <i className="ni ni-circle-08" />
-                  <span className="nav-link-inner--text">Register</span>
+                  <i className="fas fa-users" style={{ color: "blue" }} />
+                  <span
+                    className="nav-link-inner--text text-blue-900 text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Clients
+                  </span>
                 </NavLink>
               </NavItem>
               <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
-                  <i className="ni ni-key-25" />
-                  <span className="nav-link-inner--text">Login</span>
+                  <i
+                    className="fas fa-cogs text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Manage
+                  </span>
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink
-                  className="nav-link-icon"
-                  to="/admin/user-profile"
-                  tag={Link}
-                >
-                  <i className="ni ni-single-02" />
-                  <span className="nav-link-inner--text">Profile</span>
+                <NavLink className="nav-link-icon" to="/auth/myvisits" tag={Link}>
+                  <i
+                    className="fas fa-chart-line text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Visits
+                  </span>
                 </NavLink>
               </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
+                  <i
+                    className="fas fa-wallet text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Finance
+                  </span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/auth/myrunner" tag={Link}>
+                  <i
+                    className="fas fa-user-shield text-blue-500 text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-blue-500 text-2xl font-semibold"
+                    style={{ color: "blue" }}
+                  >
+                    Route
+                  </span>
+                </NavLink>
+              </NavItem>
+
+
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/auth/carerequired" tag={Link}>
+                  <i
+                    className="fas fa-user-shield text-blue-500 text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-blue-500 text-2xl font-semibold"
+                    style={{ color: "blue" }}
+                  >
+                    Carer reqiured
+                  </span>
+                </NavLink>
+              </NavItem>
+
+              <FormGroup className="mb-0 ml-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="fas fa-search" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Input placeholder="User Search" type="text" />
+                </InputGroup>
+              </FormGroup>
+              <FormGroup className="mb-0 ml-3">
+                <InputGroup className="input-group-alternative">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>
+                      <i className="fas fa-list" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <select className="form-control">
+                    <option value="" disabled selected>
+                      All
+                    </option>
+                    <option value="user1">User 1</option>
+                    <option value="user2">User 2</option>
+                    <option value="user3">User 3</option>
+                  </select>
+                </InputGroup>
+              </FormGroup>
             </Nav>
           </UncontrolledCollapse>
         </Container>

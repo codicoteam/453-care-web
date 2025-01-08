@@ -25,6 +25,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "routes.js";
+import ClientView from "./client/client_view";
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
@@ -42,9 +43,13 @@ const Admin = (props) => {
         return (
           <Route path={prop.path} element={prop.component} key={key} exact />
         );
-      } else {
+      } 
+      
+      else {
         return null;
       }
+
+    
     });
   };
 
@@ -78,7 +83,10 @@ const Admin = (props) => {
         />
         <Routes>
           {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/admin/index" replace />} />
+          <Route path="/admin/client-view" element={<ClientView />} />
+
+
+
         </Routes>
         <Container fluid>
           <AdminFooter />

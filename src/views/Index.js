@@ -47,6 +47,7 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import AdminNavbar2 from "components/Navbars/NavBar2";
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
@@ -64,6 +65,7 @@ const Index = (props) => {
   return (
     <>
       <Header />
+      <AdminNavbar2/>
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
