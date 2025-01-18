@@ -1,4 +1,4 @@
-// AppoitmentDetailsModal.js
+// VitalDetailsModal.js
 import React, { useEffect } from "react";
 import { Modal, Form, Row, Col, Divider } from "antd";
 import { Tabs } from "antd";
@@ -16,22 +16,22 @@ const DescriptionItem = ({ title, content }) => (
 const onChange = (key) => {
   console.log(key);
 };
-const AppoitmentDetailsModal = ({
-  openappointmentdetails,
-  setOpenAppoitmentDetails,
-  appointment,
+const VitalDetailsModal = ({
+  openvitaldetails,
+  setOpenVitalDetails,
+  vital,
 }) => {
   const [form] = Form.useForm();
 
-  console.log("my selected appointment", appointment._id);
+  console.log("my selected vital", vital._id);
 
   return (
     <Modal
-      title="View Appointment"
+      title="View Vital"
       centered
-      open={openappointmentdetails}
-      onOk={() => setOpenAppoitmentDetails(false)}
-      onCancel={() => setOpenAppoitmentDetails(false)}
+      open={openvitaldetails}
+      onOk={() => setOpenVitalDetails(false)}
+      onCancel={() => setOpenVitalDetails(false)}
       width={1100}
       height={800}
 
@@ -43,7 +43,7 @@ const AppoitmentDetailsModal = ({
         backgroundColor: "#fff", // Ensure white background
       }}
     >
-      {appointment ? (
+      {vital ? (
         <Tabs
           defaultActiveKey="1"
           items={[
@@ -55,37 +55,24 @@ const AppoitmentDetailsModal = ({
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      Street:
+                      Temperature:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.clientAddress.street}
+                        {vital.temperature}
                       </h3>
                     </div>
                   </Row>
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      City:
+                      Heart Rate:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.clientAddress.city}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      State:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.clientAddress.state}
+                        {vital.heartRate}
                       </h3>
                     </div>
                   </Row>
@@ -93,24 +80,12 @@ const AppoitmentDetailsModal = ({
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      Service Type:
+                      RespiratoryRate:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.serviceType}
-                      </h3>
-                    </div>
-                  </Row>
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      Visit Date:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.visitDate}
+                        {vital.respiratoryRate}
                       </h3>
                     </div>
                   </Row>
@@ -118,12 +93,24 @@ const AppoitmentDetailsModal = ({
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      Status:
+                      Oxygen Saturation:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.status}
+                        {vital.oxygenSaturation}
+                      </h3>
+                    </div>
+                  </Row>
+                  <Row className="mr-8">
+                    <div>
+                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
+                      Notes:
+                      </h3>
+                    </div>
+                    <div>
+                      <h3 className="mb-0" style={{ color: "grey" }}>
+                        {vital.notes}
                       </h3>
                     </div>
                   </Row>
@@ -131,24 +118,39 @@ const AppoitmentDetailsModal = ({
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      Payment Status:
+                      Blood Pressure systolic:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.paymentStatus}
+                        {vital.bloodPressure.systolic}
                       </h3>
                     </div>
                   </Row>
+
                   <Row className="mr-8">
                     <div>
                       <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                      More_info :
+                      Blood Pressure diastolic:
                       </h3>
                     </div>
                     <div>
                       <h3 className="mb-0" style={{ color: "grey" }}>
-                        {appointment.more_info}
+                        {vital.bloodPressure.diastolic}
+                      </h3>
+                    </div>
+                  </Row>
+
+                  
+                  <Row className="mr-8">
+                    <div>
+                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
+                      Recorded At :
+                      </h3>
+                    </div>
+                    <div>
+                      <h3 className="mb-0" style={{ color: "grey" }}>
+                        {vital.recordedAt}
                       </h3>
                     </div>
                   </Row>
@@ -171,7 +173,7 @@ const AppoitmentDetailsModal = ({
                       </div>
                       <div>
                         <h3 className="mb-0" style={{ color: "grey" }}>
-                          {appointment.clientId.firstName}
+                          {vital.clientId.firstName}
                         </h3>
                       </div>
                     </Row>
@@ -183,7 +185,7 @@ const AppoitmentDetailsModal = ({
                       </div>
                       <div>
                         <h3 className="mb-0" style={{ color: "grey" }}>
-                          {appointment.clientId.contactNumber}
+                          {vital.clientId.contactNumber}
                         </h3>
                       </div>
                     </Row>
@@ -198,7 +200,7 @@ const AppoitmentDetailsModal = ({
                       </div>
                       <div>
                         <h3 className="mb-0" style={{ color: "grey" }}>
-                          {appointment.clientId.address}
+                          {vital.clientId.address}
                         </h3>
                       </div>
                     </Row>
@@ -210,7 +212,7 @@ const AppoitmentDetailsModal = ({
                       </div>
                       <div>
                         <h3 className="mb-0" style={{ color: "grey" }}>
-                          {appointment.clientId.gender}
+                          {vital.clientId.gender}
                         </h3>
                       </div>
                     </Row>
@@ -239,10 +241,10 @@ const AppoitmentDetailsModal = ({
           onChange={onChange}
         />
       ) : (
-        <p>Loading visit details...</p>
+        <p>Loading vitals details...</p>
       )}
     </Modal>
   );
 };
 
-export default AppoitmentDetailsModal;
+export default VitalDetailsModal;

@@ -37,6 +37,8 @@ import MyVisits from "views/examples/myvisits";
 import MyTasks from "views/examples/task";
 import MyMedications from "views/examples/medications";
 import MyRunner from "views/examples/runner";
+import MyAppointments from "views/examples/appointment";
+import MyVital from "views/examples/vital";
 
 var routes = [
   {
@@ -176,6 +178,23 @@ var routes = [
     component: <MyVisits />,
     layout: "/auth",
   },
+
+  {
+    path: "/myappointment",
+    name: "Appointment",
+    icon: "ni ni-circle-08 text-pink",
+    component: <MyAppointments />,
+    layout: "/auth",
+  },
+
+  {
+    path: "/myvital",
+    name: "Vitals",
+    icon: "ni ni-circle-08 text-pink",
+    component: <MyVital />,
+    layout: "/auth",
+  },
+  
 
   {
     path: "/mytasks",

@@ -23,7 +23,7 @@ import AppointmentService from "services/appointments_service/appointments_servi
 const { Option } = Select;
 
 
-const EditAppointment = ({ open, onClose, appointment }) => {
+const MakeVisitFromAppointment = ({ open, onClose, appointment }) => {
   const [form] = Form.useForm();
   const [addloading, setAddLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -84,11 +84,11 @@ const EditAppointment = ({ open, onClose, appointment }) => {
 
         try {
           setAddLoading(true);
-          const response = await AppointmentService.updateAppointmentsById(
+          const response = await VisitsService.updateVisitById(
             appointment._id,
             updatedData
           );
-          showMessage("success", "update appointment successfully!");
+          showMessage("success", "make visit successfully!");
 
           onClose();
         } catch (error) {
@@ -104,7 +104,7 @@ const EditAppointment = ({ open, onClose, appointment }) => {
 
   return (
     <Drawer
-      title="Edit Appointment"
+      title="Make Visit"
       width={720}
       onClose={onClose}
       open={open}
@@ -112,7 +112,7 @@ const EditAppointment = ({ open, onClose, appointment }) => {
         <Space>
           <Button onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit} type="primary" color="success">
-            Update
+            Make Visit
           </Button>
         </Space>
       }
@@ -259,4 +259,4 @@ const EditAppointment = ({ open, onClose, appointment }) => {
   );
 };
 
-export default EditAppointment;
+export default MakeVisitFromAppointment;

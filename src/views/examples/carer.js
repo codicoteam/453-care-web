@@ -41,6 +41,8 @@ import VisitsService from "services/visits_service/visits_service";
 import { Modal } from "antd";
 import { FaClock, FaDollarSign, FaMapMarkerAlt } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { UserOutlined } from "@ant-design/icons";
+import { Polar } from "react-chartjs-2";
 
 import {
   DatePicker,
@@ -49,6 +51,7 @@ import {
   Input,
   Switch,
   Select,
+  Avatar,
   Space,
   message,
 } from "antd";
@@ -62,6 +65,7 @@ import TasksTab from "./carer_template/task_tab";
 import { FaEdit } from "react-icons/fa";
 import EditEmployeeModal from "./carer_template/edit_carer";
 import WarningComponent from "components/customersed_warning/warning_component";
+import { supabase } from "helper/supabase/supabaseClient";
 
 const { Option } = Select;
 
@@ -89,6 +93,41 @@ const MyCarer = () => {
   const [assessmenterror, setAssessmentError] = useState(null);
   const [open, setOpen] = useState(false);
   const [openassessments, setOpenAssessments] = useState(false);
+
+  const [imageUrl, setImageUrl] = useState(null);
+  const handleFileUpload = async (event) => {
+    console.log("handlefileupload");
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Invalid file type. Please upload an image.");
+      return;
+    }
+
+    const fileName = `${Date.now()}_${file.name}`;
+
+    // Upload image to the Supabase bucket
+    const { data, error } = await supabase.storage
+      .from("care_app")
+      .upload(fileName, file);
+
+    if (error) {
+      console.error("Error uploading file:", error.message);
+      return;
+    }
+
+    // Get the public URL of the uploaded image
+    const { data: publicData } = supabase.storage
+      .from("care_app")
+      .getPublicUrl(fileName);
+    if (publicData) {
+      console.log(publicData.publicUrl);
+      setImageUrl(publicData.publicUrl);
+    }
+  };
+
+  console.log(imageUrl);
 
   useEffect(() => {
     const fetchCarers = async () => {
@@ -130,6 +169,100 @@ const MyCarer = () => {
 
     fetchVisit();
   }, [selectedCarer]);
+
+  const numberOfVisits = visits.length;
+
+  const completedVisits = visits.filter(
+    (visit) => visit.status === "Completed"
+  );
+  const numberOfCompletedVisits = completedVisits.length;
+
+  const totalHours = visits.reduce((acc, visit) => {
+    const start = new Date(visit.startTime); // Convert startTime to Date object
+    const end = new Date(visit.endTime); // Convert endTime to Date object
+
+    // Calculate the difference in milliseconds
+    const timeDifference = end - start;
+
+    // Convert milliseconds to hours (1 hour = 3600000 milliseconds)
+    const hours = timeDifference / 3600000;
+
+    return acc + hours; // Sum the hours
+  }, 0);
+
+  const totalPayment = visits.reduce((acc, visit) => {
+    const start = new Date(visit.startTime); // Convert startTime to Date object
+    const end = new Date(visit.endTime); // Convert endTime to Date object
+
+    // Calculate the difference in milliseconds
+    const timeDifference = end - start;
+
+    // Convert milliseconds to hours (1 hour = 3600000 milliseconds)
+    const hours = timeDifference / 3600000;
+    const payment = hours * visit.amount_paid_per_hour;
+
+    return acc + payment; // Sum the hours
+  }, 0);
+
+  const totalHoursOfCompletedVisits = completedVisits.reduce((acc, cvisit) => {
+    const start = new Date(cvisit.startTime); // Convert startTime to Date object
+    const end = new Date(cvisit.endTime); // Convert endTime to Date object
+
+    // Calculate the difference in milliseconds
+    const timeDifference = end - start;
+
+    // Convert milliseconds to hours (1 hour = 3600000 milliseconds)
+    const hours = timeDifference / 3600000;
+
+    return acc + hours; // Sum the hours
+  }, 0);
+
+  // Define status counts
+  const statusCounts = {
+    Completed: 0,
+    Ongoing: 0,
+    Scheduled: 0,
+  };
+
+  // Count the visits by their status
+  visits.forEach((visit) => {
+    if (statusCounts[visit.status] !== undefined) {
+      statusCounts[visit.status]++;
+    }
+  });
+
+  // Prepare data for the Polar chart
+  const labels = ["Completed", "Ongoing", "Scheduled"];
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Visits by Status",
+        data: [
+          statusCounts.Completed,
+          statusCounts.Ongoing,
+          statusCounts.Scheduled,
+        ],
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.5)", // Completed (Green)
+          "rgba(255, 159, 64, 0.5)", // Ongoing (Orange)
+          "rgba(153, 102, 255, 0.5)", // Scheduled (Purple)
+        ],
+      },
+    ],
+  };
+
+  // Chart.js configuration
+  const options = {
+    responsive: true,
+    legend: {
+      position: "top",
+    },
+    title: {
+      display: true,
+      text: "Visits by Status",
+    },
+  };
 
   useEffect(() => {
     const fetchAssessments = async () => {
@@ -205,7 +338,7 @@ const MyCarer = () => {
       const carerData = {
         firstName: values.firstname,
         lastName: values.lastname,
-        profilePicture: "djhedhuieuidfiufbeifbeiu", // Example static value
+        profilePicture: imageUrl, // Example static valueimageUrl
         email: values.email,
         contactNumber: values.contactnumber,
         address: values.address,
@@ -225,7 +358,7 @@ const MyCarer = () => {
 
       setAddLoading(true);
       await AddCarerService.addNewCarer(carerData);
-      showMessage("success", "Login successfully!");
+      showMessage("success", "Adding carer successfully!");
       console.log(await AddCarerService.addNewCarer(carerData));
 
       form.resetFields();
@@ -355,6 +488,7 @@ const MyCarer = () => {
                     <Input placeholder="Please enter email" />
                   </Form.Item>
                 </Col>
+
                 <Col span={12}>
                   <Form.Item
                     name="contactnumber"
@@ -368,6 +502,39 @@ const MyCarer = () => {
                   >
                     <Input placeholder="Please enter contact number" />
                   </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col
+                  span={12}
+                  style={{
+                    border: "2px dashed lightgreen", // Broken light green border
+                    padding: "16px", // Padding inside the column
+                  }}
+                >
+                  <div>
+                    <input
+                      style={{
+                        padding: "16px", // Padding inside the column
+                      }}
+                      type="file"
+                      onChange={handleFileUpload}
+                    />
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="Uploaded"
+                        style={{
+                          width: "200px",
+                          marginTop: "10px",
+                          padding: "16px",
+                        }}
+                      />
+                    ) : (
+                      <Avatar size={64} icon={<UserOutlined />} />
+                    )}
+                  </div>
                 </Col>
               </Row>
               <Row gutter={16}>
@@ -572,6 +739,30 @@ const MyCarer = () => {
               </CardHeader>
               {selectedCarer ? (
                 <div className="p-3">
+                  <div>
+                    {selectedCarer.profilePicture ? (
+                      <img
+                        src={selectedCarer.profilePicture}
+                        alt="Uploaded"
+                        style={{
+                          width: "200px",
+                          marginTop: "10px",
+                          padding: "16px",
+                          border: "2px solid grey",
+                        }}
+                      />
+                    ) : (
+                      <Avatar
+                        style={{
+                          width: "200px",
+                          marginTop: "10px",
+                          padding: "16px",
+                        }}
+                        size={64}
+                        icon={<UserOutlined />}
+                      />
+                    )}
+                  </div>
                   <h4>
                     <span style={{ color: "black", marginRight: "10px" }}>
                       First Name:
@@ -669,47 +860,61 @@ const MyCarer = () => {
                 </Row>
               </CardHeader>
               <div className="p-3">
-                {/* Worked Hours Section */}
-                <div className="mb-4">
-                  <Row className="align-items-center">
-                    <div className="col">
-                      <h2 className="mb-0 d-flex align-items-center text-primary">
-                        <FaClock className="mr-2" />
-                        Worked Hours
-                      </h2>
-                    </div>
-                  </Row>
-                  <div className="pl-3 mt-2">
-                    <h4 className="mb-1">3 Hours</h4>
-                  </div>
-                </div>
                 {/* Paying Amount Section */}
-                <div className="mb-4">
+                <div>
                   <Row className="align-items-center">
                     <div className="col">
-                      <h2 className="mb-0 d-flex align-items-center text-primary">
-                        <FaDollarSign className="mr-2" />
-                        Paying Amount
-                      </h2>
+                      <h4 className="mb-0 d-flex align-items-center ">
+                        <FaDollarSign className="mr-2 text-primary" />
+                        Paying Amount: {totalPayment.toFixed(2)}
+                      </h4>
                     </div>
                   </Row>
-                  <div className="pl-3 mt-2">
-                    <h4 className="mb-1">$300</h4>
-                  </div>
                 </div>
                 {/* Number of Visits Section */}
                 <div>
                   <Row className="align-items-center">
                     <div className="col">
-                      <h2 className="mb-0 d-flex align-items-center text-primary">
-                        <FaMapMarkerAlt className="mr-2" />
-                        Number of Visits
-                      </h2>
+                      <h4 className="mb-0 d-flex align-items-center ">
+                        <FaMapMarkerAlt className="mr-2  text-primary" />
+                        Number of Visits: {numberOfVisits}
+                      </h4>
                     </div>
                   </Row>
-                  <div className="pl-3 mt-2">
-                    <h4 className="mb-1">2 Visits</h4>
-                  </div>
+                </div>
+
+                <div>
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h4 className="mb-0 d-flex align-items-center ">
+                        <FaMapMarkerAlt className="mr-2 text-primary" />
+                        Number of Completed Visits: {numberOfCompletedVisits}
+                      </h4>
+                    </div>
+                  </Row>
+                </div>
+
+                <div>
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h4 className="mb-0 d-flex align-items-center ">
+                        <FaClock className="mr-2 text-primary" />
+                        Total hours of Completed Visits:{" "}
+                        {totalHoursOfCompletedVisits.toFixed(2)}
+                      </h4>
+                    </div>
+                  </Row>
+                </div>
+
+                <div>
+                  <Row className="align-items-center">
+                    <div className="col">
+                      <h4 className="mb-0 d-flex align-items-center ">
+                        <FaClock className="mr-2 text-primary" />
+                        Total hours of all visits: {totalHours.toFixed(2)}
+                      </h4>
+                    </div>
+                  </Row>
                 </div>
               </div>
             </Card>
@@ -723,137 +928,152 @@ const MyCarer = () => {
                 </Row>
               </CardHeader>
 
-              {selectedCarer ? (
-                visitloading ? (
-                  <div className="p-3">
-                    <CustomSkeleton height="200px" width="100%" />
-                  </div>
-                ) : visiterror ? (
-                  <div className="p-3">
-                    <h4>Error: {visiterror}</h4>
-                  </div>
-                ) : visits.length > 0 ? (
-                  <div sm="6">
-                    {visits.map((visit) => (
-                      <div
-                        key={visit.id}
-                        className="pl-3 pr-3 mx-2 bg-white rounded-lg shadow border border-gray-200 p-4 mb-5 max-w-sm hover:shadow-lg hover:scale-105 transition-transform duration-200"
-                      >
-                        <h4 className="mb-2 text-gray-700">
-                          Client Visit: Ashton Mapunga
-                        </h4>
-                        <h4 className="mb-2 text-gray-700">
-                          Address: {visit.location.address}
-                        </h4>
-                        <h4 className="mb-2 text-gray-700">
-                          Date of Visit: {visit.DateOfVisit}
-                        </h4>
+              <div>
+                <div
+                  style={{
+                    background: "#f9f9f9",
+                  }}
+                  className="mx-3  rounded-lg  border border-gray-200   hover:shadow-lg hover:scale-105 transition-transform duration-200"
+                >
+                  <Polar data={data} options={options} />
+                </div>
+                <div className="mb-5"></div>
 
-                        <Row className="align-items-center">
-                          <div className="col">
-                            <h4 className="mb-2 text-gray-700">
-                              {visit.status}
-                            </h4>
-                          </div>
-                          <div className="col text-right">
-                            <Button
-                              color="primary"
-                              href="#pablo"
-                              onClick={() => setOpen(true)}
-                              size="sm"
-                            >
-                              View More
-                            </Button>
-                          </div>
-                        </Row>
-
-                        <Modal
-                          title="Visit"
-                          centered
-                          open={open}
-                          onOk={() => setOpen(false)}
-                          onCancel={() => setOpen(false)}
-                          width={1200}
+                {selectedCarer ? (
+                  visitloading ? (
+                    <div className="p-3">
+                      <CustomSkeleton height="200px" width="100%" />
+                    </div>
+                  ) : visiterror ? (
+                    <div className="p-3">
+                      <h4>Error: {visiterror}</h4>
+                    </div>
+                  ) : visits.length > 0 ? (
+                    <div sm="6">
+                      {visits.map((visit) => (
+                        <div
+                          key={visit.id}
+                          style={{
+                            background: "#f9f9f9",
+                          }}
+                          className="pl-5 pr-5 mx-4 rounded-lg  border border-gray-200 p-3 mb-5 max-w-sm hover:shadow-lg hover:scale-105 transition-transform duration-200"
                         >
-                          <div className="border border-gray-400 rounded-lg p-4 mt-5">
-                            <Tabs
-                              defaultActiveKey="1"
-                              items={[
-                                {
-                                  key: "1",
-                                  label: "Details",
-                                  children: (
-                                    <div>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Client Visit: Ashton Mapunga
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Address: {visit.location.address}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Date of Visit: {visit.DateOfVisit}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Employee Name:{" "}
-                                        {visit.careProfessionalId.firstName}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Employee Email:{" "}
-                                        {visit.careProfessionalId.email}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Start Time: {visit.startTime}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        End Time: {visit.endTime}
-                                      </h4>
-                                      <h4 className="mb-2 text-gray-700">
-                                        Status: {visit.status}
-                                      </h4>
-                                    </div>
-                                  ),
-                                },
-                                {
-                                  key: "2",
-                                  label: "Tasks",
-                                  children: <TasksTab visitId={visit._id} />,
-                                },
-                                {
-                                  key: "3",
-                                  label: "Care Teams",
-                                  children: (
-                                    <div>
-                                      <p>This is the first text in Tab 3.</p>
-                                      <p>This is the second text in Tab 3.</p>
-                                    </div>
-                                  ),
-                                },
-                                {
-                                  key: "4",
-                                  label: "Observations",
-                                  children: (
-                                    <ObservationsTab visitId={visit._id} />
-                                  ),
-                                },
-                              ]}
-                              onChange={onChange}
-                            />
-                          </div>
-                        </Modal>
-                      </div>
-                    ))}
-                  </div>
+                          <h4 className="mb-2 text-gray-700">
+                            Client Visit: Ashton Mapunga
+                          </h4>
+                          <h4 className="mb-2 text-gray-700">
+                            Address: {visit.location.address}
+                          </h4>
+                          <h4 className="mb-2 text-gray-700">
+                            Date of Visit: {visit.DateOfVisit}
+                          </h4>
+
+                          <Row className="align-items-center">
+                            <div className="col">
+                              <h4 className="mb-2 text-gray-700">
+                                {visit.status}
+                              </h4>
+                            </div>
+                            <div className="col text-right">
+                              <Button
+                                color="primary"
+                                href="#pablo"
+                                onClick={() => setOpen(true)}
+                                size="sm"
+                              >
+                                View More
+                              </Button>
+                            </div>
+                          </Row>
+
+                          <Modal
+                            title="Visit"
+                            centered
+                            open={open}
+                            onOk={() => setOpen(false)}
+                            onCancel={() => setOpen(false)}
+                            width={1200}
+                          >
+                            <div className="border border-gray-400 rounded-lg p-4 mt-5">
+                              <Tabs
+                                defaultActiveKey="1"
+                                items={[
+                                  {
+                                    key: "1",
+                                    label: "Details",
+                                    children: (
+                                      <div>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Client Visit: Ashton Mapunga
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Address: {visit.location.address}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Date of Visit: {visit.DateOfVisit}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Employee Name:{" "}
+                                          {visit.careProfessionalId.firstName}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Employee Email:{" "}
+                                          {visit.careProfessionalId.email}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Start Time: {visit.startTime}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          End Time: {visit.endTime}
+                                        </h4>
+                                        <h4 className="mb-2 text-gray-700">
+                                          Status: {visit.status}
+                                        </h4>
+                                      </div>
+                                    ),
+                                  },
+                                  {
+                                    key: "2",
+                                    label: "Tasks",
+                                    children: <TasksTab visitId={visit._id} />,
+                                  },
+                                  {
+                                    key: "3",
+                                    label: "Care Teams",
+                                    children: (
+                                      <div>
+                                        <p>This is the first text in Tab 3.</p>
+                                        <p>This is the second text in Tab 3.</p>
+                                      </div>
+                                    ),
+                                  },
+                                  {
+                                    key: "4",
+                                    label: "Observations",
+                                    children: (
+                                      <ObservationsTab visitId={visit._id} />
+                                    ),
+                                  },
+                                ]}
+                                onChange={onChange}
+                              />
+                            </div>
+                          </Modal>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-3">
+                      <h4>No visits found for this carer.</h4>
+                      <CustomNoData width="70px" height="70px" />
+                    </div>
+                  )
                 ) : (
                   <div className="p-3">
-                    <h4>No visits found for this carer.</h4>
-                    <CustomNoData width="70px" height="70px" />
+                    <WarningComponent />
                   </div>
-                )
-              ) : (
-                <div className="p-3">
-                  <WarningComponent />
-                </div>
-              )}
+                )}
+              </div>
             </Card>
           </Col>
           <Col xl="3">
@@ -975,8 +1195,6 @@ const MyCarer = () => {
                 <h4 className="mb-2">Carers: Elliot Williams</h4>
                 <h4 className="mb-2">Occured: 09/12/2020</h4>
               </div>
-
-           
             </Card>
           </Col>
         </Row>

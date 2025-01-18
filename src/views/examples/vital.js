@@ -53,7 +53,7 @@ import VisitDetailsModal from "./visit_templates/view_visit";
 import AppointmentService from "services/appointments_service/appointments_service";
 import AppoitmentDetailsModal from "./appoitnment_template/view_apointment";
 import EditAppointment from "./appoitnment_template/edit_appointment";
-import MakeVisitFromAppointment from "./appoitnment_template/make_visit";
+import VitalService from "services/vital_service/vital_service";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -74,50 +74,48 @@ const suffix = (
 );
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const MyAppointments = () => {
-  const [appointments, setAPpointment] = useState([]);
-  const [Appointmentloading, setAppointmentLoading] = useState(true);
+const MyVital = () => {
+  const [vitals, setVital] = useState([]);
+  const [vitalloading, setVitalLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [appointmenterror, setAppointmentError] = useState(null);
+  const [appointmenterror, setVitalError] = useState(null);
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [openAppointmentdetails, setOpenAppointmentDetails] = useState(false);
+  const [openVitaldetails, setOpenVitalDetails] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedVital, setSelectedVital] = useState(null);
   const [deleteloading, setDeleteLoading] = useState(false);
 
-  const handleOpenDrawer = (appointment) => {
-    setSelectedAppointment(appointment);
+  const handleOpenDrawer = (vital) => {
+    setSelectedVital(vital);
     setDrawerOpen(true);
   };
 
-  const handleMoreDetails = (appointment) => {
-    setSelectedAppointment(appointment);
-    setOpenAppointmentDetails(true);
+  const handleMoreDetails = (vital) => {
+    setSelectedVital(vital);
+    setOpenVitalDetails(true);
   };
 
   const handleCloseDrawer = () => {
-    setSelectedAppointment(null);
+    setSelectedVital(null);
     setDrawerOpen(false);
   };
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [selectedVitalId, setSelectedVitalId] = useState(null);
 
-  const handleDeleteClick = (appointmentid) => {
-    setSelectedAppointmentId(appointmentid);
+  const handleDeleteClick = (vitalId) => {
+    setSelectedVitalId(vitalId);
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     try {
       setDeleteLoading(true);
-      await AppointmentService.deleteAppointmentById(selectedAppointmentId);
-      showMessage("success", "Visit successfully deleted!");
-      setAPpointment((prevAppointment) =>
-        prevAppointment.filter(
-          (appointment) => appointment._id !== selectedAppointmentId
-        )
+      await VitalService.deleteVitalById(selectedVitalId);
+      showMessage("success", "Vital successfully deleted!");
+      setVital((prevVital) =>
+        prevVital.filter((vital) => vital._id !== selectedVitalId)
       );
       setIsDeleteModalOpen(false);
     } catch (error) {
@@ -128,18 +126,18 @@ const MyAppointments = () => {
   };
 
   useEffect(() => {
-    const fetchAppointment = async () => {
+    const fetchVital = async () => {
       try {
-        const response = await AppointmentService.getAllAppointments();
-        setAPpointment(response.data || []);
+        const response = await VitalService.getAllVital();
+        setVital(response.data || []);
       } catch (err) {
-        setError(err.message || "Error fetching appointments");
+        setError(err.message || "Error fetching vital");
       } finally {
-        setAppointmentLoading(false);
+        setVitalLoading(false);
       }
     };
 
-    fetchAppointment();
+    fetchVital();
   }, []);
 
   const showModal = () => {
@@ -159,13 +157,17 @@ const MyAppointments = () => {
     setOpen(false);
   };
 
+  
   return (
     <>
       <Container className="mt--7 bg-white" fluid>
+      
+
         <Row className="mt-5">
           <Col xl="4">
             <Card className="shadow">
               <CardHeader className="border-0">
+               
                 <Row className="align-items-center">
                   <div className="col mt-4">
                     <h3 className="mb-0" style={{ color: "red" }}>
@@ -227,7 +229,7 @@ const MyAppointments = () => {
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">All Appointments</h3>
+                    <h3 className="mb-0">All Vitals</h3>
                   </div>
                 </Row>
               </CardHeader>
@@ -251,14 +253,16 @@ const MyAppointments = () => {
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
-                    <th scope="col">Client Address</th>
-                    <th scope="col"> Status</th>
-                    <th scope="col"> Payment Status</th>
+                  <th scope="col">Client Name</th>
+                    <th scope="col"> Temprature</th>
+                    <th scope="col"> Heart Rate </th>
+                    <th scope="col"> Respiratory Rate </th>
+                    <th scope="col"> Oxygen Saturation  </th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-violet">
-                  {Appointmentloading ? (
+                  {vitalloading ? (
                     <tr>
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
@@ -272,29 +276,43 @@ const MyAppointments = () => {
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
+                    
                     </tr>
                   ) : error ? (
                     <tr>
                       <td>Error: {error}</td>
                     </tr>
-                  ) : appointments.length > 0 ? (
-                    appointments.map((appointment) => (
-                      <tr key={appointment._id} style={{ cursor: "pointer" }}>
+                  ) : vitals.length > 0 ? (
+                    vitals.map((vital) => (
+                      <tr key={vital._id} style={{ cursor: "pointer" }}>
                         <th scope="row">
-                          <div>{appointment.clientAddress.city}</div>
+                          <div>Ashton Mapunga</div>
                         </th>
                         <th scope="row">
-                          <div>{appointment.status}</div>
+                          <div>{vital.temperature}</div>
                         </th>
                         <th scope="row">
-                          <div>{appointment.paymentStatus}</div>
+                          <div>{vital.heartRate}</div>
                         </th>
-
+                        <th scope="row">
+                          <div>{vital.respiratoryRate}</div>
+                        </th>
+                        <th scope="row">
+                          <div>{vital.oxygenSaturation}</div>
+                        </th>
+                       
+                       
                         <th scope="row">
                           <div className="row">
                             <div className="mr-2">
                               <PrimaryButton
-                                onClick={() => handleMoreDetails(appointment)}
+                                onClick={() => handleMoreDetails(vital)}
                                 title="View"
                                 color="success"
                                 variant="outlined"
@@ -306,16 +324,7 @@ const MyAppointments = () => {
                                 title="Edit"
                                 color="primary"
                                 variant="outlined"
-                                onClick={() => handleOpenDrawer(appointment)}
-                              />
-                            </div>
-
-                            <div className="mr-2">
-                              <PrimaryButton
-                                title="Make Visit"
-                                color="primary"
-                                variant="outlined"
-                                onClick={() => handleOpenDrawer(appointment)}
+                                onClick={() => handleOpenDrawer(vital)}
                               />
                             </div>
                             <div></div>
@@ -324,9 +333,7 @@ const MyAppointments = () => {
                                 title="Delete"
                                 color="danger"
                                 variant="outlined"
-                                onClick={() =>
-                                  handleDeleteClick(appointment._id)
-                                }
+                                onClick={() => handleDeleteClick(vital._id)}
                               />
                             </div>
                           </div>
@@ -342,26 +349,19 @@ const MyAppointments = () => {
                   )}
                 </tbody>
               </Table>
-              {selectedAppointment && (
+              {selectedVital && (
                 <AppoitmentDetailsModal
-                  openAppointmentdetails={openAppointmentdetails}
-                  setOpenAppointmentDetails={setOpenAppointmentDetails}
-                  appointment={selectedAppointment}
+                  openVitaldetails={openVitaldetails}
+                  setOpenVitalDetails={setOpenVitalDetails}
+                  appointment={selectedVital}
                 />
               )}
 
               <EditAppointment
                 open={isDrawerOpen}
                 onClose={handleCloseDrawer}
-                appointment={selectedAppointment}
+                appointment={selectedVital}
               />
-
-              <MakeVisitFromAppointment
-                open={isDrawerOpen}
-                onClose={handleCloseDrawer}
-                appointment={selectedAppointment}
-              />
-
               <Modal
                 title="Delete Appointment"
                 visible={isDeleteModalOpen}
@@ -383,4 +383,4 @@ const MyAppointments = () => {
   );
 };
 
-export default MyAppointments;
+export default MyVital;

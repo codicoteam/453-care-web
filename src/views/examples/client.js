@@ -59,6 +59,9 @@ import CustomSpin from "components/customised_spins/customised_sprin";
 import ClientService from "services/client_services/client_services";
 import WarningComponent from "components/customersed_warning/warning_component";
 import FamilyService from "services/familymember_services/family_services";
+import AddFamilyMemberDialog from "./familymember_templates/addclient_family_member";
+import { SlOptions } from "react-icons/sl";
+
 const { Option } = Select;
 
 const { Search } = Input;
@@ -163,6 +166,14 @@ const MyClient = () => {
     setOpend(false);
   };
 
+  const [openf, setOpenf] = useState(false);
+  const showDrawerf = () => {
+    setOpenf(true);
+  };
+  const onClosef = () => {
+    setOpenf(false);
+  };
+
   const [form] = Form.useForm();
   const [addloading, setAddLoading] = useState(false);
 
@@ -207,6 +218,23 @@ const MyClient = () => {
       showMessage("error", error || "Something went wrong!");
     } finally {
       setAddLoading(false);
+    }
+  };
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const toggleDialog = () => {
+    setIsDialogOpen(!isDialogOpen);
+  };
+
+  const handleAddFamilyMember = async (data) => {
+    try {
+      const response = await FamilyService.postTask(data);
+      console.log("Family member added successfully:", response);
+      // Optionally, refresh the family members list or show a success message
+    } catch (error) {
+      console.error("Error adding family member:", error);
+      // Optionally, show an error message
     }
   };
 
@@ -622,16 +650,13 @@ const MyClient = () => {
                 <Row className="align-items-center">
                   <div className="col"></div>
                   <div className="col text-right">
-                  
-
-
                     <div className="col text-right">
-                            <MdPreview
-                              size={24} // Adjust the size as needed
-                              style={{ cursor: "pointer", color: "primary" }} // Style the icon
-                              onClick={(e) => e.preventDefault()}
-                              />
-                          </div>
+                      <MdPreview
+                        size={24} // Adjust the size as needed
+                        style={{ cursor: "pointer", color: "primary" }} // Style the icon
+                        onClick={(e) => e.preventDefault()}
+                      />
+                    </div>
                   </div>
                 </Row>
               </div>
@@ -650,22 +675,32 @@ const MyClient = () => {
                   <div className="col">
                     <h2 className="mb-0">Family Members</h2>
                   </div>
-                  <div className="col text-right">
-                    <Button
-                      style={{
-                        backgroundColor: "green",
-                        color: "white",
-                        border: "none",
-                      }}
-                      color="primary"
-                      href="#pablo"
-                      size="sm"
-                    >
-                      Add Family Member
-                    </Button>
-                  </div>
+                  {selectedClient && (
+                    <div className="col text-right">
+                      <Button
+                        style={{
+                          backgroundColor: "green",
+                          color: "white",
+                          border: "none",
+                        }}
+                        size="sm"
+                        onClick={toggleDialog}
+                      >
+                        Add Family Member
+                      </Button>
+                    </div>
+                  )}
                 </Row>
               </CardHeader>
+
+              {selectedClient && (
+                <AddFamilyMemberDialog
+                  isOpen={isDialogOpen}
+                  toggle={toggleDialog}
+                  onAdd={handleAddFamilyMember}
+                  selectedClient={selectedClient}
+                />
+              )}
 
               {familyloading ? (
                 <div className="p-3">
@@ -704,9 +739,53 @@ const MyClient = () => {
                           {famil.relationshipToClient}
                         </h3>
                         <h4>Name: {famil.firstName}</h4>
-                        <h4 className="mb-2">
-                          Contact Number: {famil.contactNumber}
-                        </h4>
+
+                        <Row className="align-items-center">
+                          <div className="col">
+                            <h4 className="mb-2">{famil.contactNumber}</h4>
+                          </div>
+                          <div className="col text-right">
+                            <div className="col text-right">
+                              <MdPreview 
+
+                                size={24} // Adjust the size as needed
+                                style={{ cursor: "pointer", color: "primary" }} // Style the icon
+                                onClick={() => setOpenf(true)} // Attach the onClick handler
+                              />
+                            </div>
+                            <Modal
+                              title="Visit"
+                              centered
+                              open={openf}
+                              onOk={() => setOpenf(false)}
+                              onCancel={() => setOpenf(false)}
+                              width={700}
+                            >
+                              <h4 className="mb-2 text-gray-700">
+                                First Name: {famil.firstName}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Last Name: {famil.lastName}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Relationship To Client:{" "}
+                                {famil.relationshipToClient}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Email: {famil.email}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Profile Picture : {famil.profilePicture}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Contact Number: {famil.contactNumber}
+                              </h4>
+                              <h4 className="mb-2 text-gray-700">
+                                Password: {famil.password}
+                              </h4>
+                            </Modal>
+                          </div>
+                        </Row>
                       </div>
                     </div>
                   ))}
