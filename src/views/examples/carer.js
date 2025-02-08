@@ -43,6 +43,9 @@ import { FaClock, FaDollarSign, FaMapMarkerAlt } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { UserOutlined } from "@ant-design/icons";
 import { Polar } from "react-chartjs-2";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 import {
   DatePicker,
@@ -66,6 +69,8 @@ import { FaEdit } from "react-icons/fa";
 import EditEmployeeModal from "./carer_template/edit_carer";
 import WarningComponent from "components/customersed_warning/warning_component";
 import { supabase } from "helper/supabase/supabaseClient";
+import VitalsTab from "./carer_template/vitals_tab";
+import UserLocationMap from "./visit_templates/visit_map";
 
 const { Option } = Select;
 
@@ -326,6 +331,13 @@ const MyCarer = () => {
   const onClose = () => {
     setOpend(false);
   };
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter carers based on searchTerm
+  const filteredCarers = carers.filter((carer) =>
+    carer.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const [form] = Form.useForm();
   const [addloading, setAddLoading] = useState(false);
@@ -651,9 +663,13 @@ const MyCarer = () => {
                 <thead className="thead-light">
                   <tr>
                     <th scope="col">
-                      <div className="row bg-blue align-items-center p-3 ">
+                      <div className="row bg-blue align-items-center p-3">
                         <div className="mb-2">
-                          <Input placeholder="Search Carers" />
+                          <Input
+                            placeholder="Search Carers"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
                         </div>
                       </div>
                     </th>
@@ -670,8 +686,8 @@ const MyCarer = () => {
                     <tr>
                       <td>Error: {error}</td>
                     </tr>
-                  ) : carers.length > 0 ? (
-                    carers.map((carer) => (
+                  ) : filteredCarers.length > 0 ? (
+                    filteredCarers.map((carer) => (
                       <tr
                         key={carer._id}
                         onClick={() => handleSelectCarer(carer)}
@@ -1029,6 +1045,56 @@ const MyCarer = () => {
                                         <h4 className="mb-2 text-gray-700">
                                           Status: {visit.status}
                                         </h4>
+
+                                        <>
+                                          <h4>
+                                            Address: {visit?.location?.address}
+                                          </h4>
+                                          <div
+                                            style={{
+                                              height: "300px",
+                                              width: "100%",
+                                            }}
+                                          >
+                                            <MapContainer
+                                              center={[
+                                                visit?.location?.latitude,
+                                                visit?.location?.longitude,
+                                              ]}
+                                              zoom={13}
+                                              style={{
+                                                height: "100%",
+                                                width: "100%",
+                                              }}
+                                            >
+                                              <TileLayer
+                                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                              />
+                                              <Marker
+                                                position={[
+                                                  visit?.location?.latitude,
+                                                  visit?.location?.longitude,
+                                                ]}
+                                              >
+                                                <Popup>
+                                                  <strong>Location:</strong>{" "}
+                                                  {visit?.location?.address}{" "}
+                                                  <br />
+                                                  <strong>
+                                                    Latitude:
+                                                  </strong>{" "}
+                                                  {visit?.location?.latitude}{" "}
+                                                  <br />
+                                                  <strong>
+                                                    Longitude:
+                                                  </strong>{" "}
+                                                  {visit?.location?.longitude}
+                                                </Popup>
+                                              </Marker>
+                                            </MapContainer>
+                                          </div>
+                                        </>
                                       </div>
                                     ),
                                   },
@@ -1053,6 +1119,12 @@ const MyCarer = () => {
                                     children: (
                                       <ObservationsTab visitId={visit._id} />
                                     ),
+                                  },
+
+                                  {
+                                    key: "5",
+                                    label: "Vitals",
+                                    children: <VitalsTab visitId={visit._id} />,
                                   },
                                 ]}
                                 onChange={onChange}
