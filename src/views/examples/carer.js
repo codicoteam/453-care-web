@@ -71,6 +71,7 @@ import WarningComponent from "components/customersed_warning/warning_component";
 import { supabase } from "helper/supabase/supabaseClient";
 import VitalsTab from "./carer_template/vitals_tab";
 import UserLocationMap from "./visit_templates/visit_map";
+import { TimePicker } from "antd";
 
 const { Option } = Select;
 
@@ -485,6 +486,7 @@ const MyCarer = () => {
                   </Form.Item>
                 </Col>
               </Row>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
@@ -514,9 +516,99 @@ const MyCarer = () => {
                   >
                     <Input placeholder="Please enter contact number" />
                   </Form.Item>
+
+                  <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter a password",
+                      },
+                      {
+                        min: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    ]}
+                  >
+                    <Input.Password placeholder="Please enter password" />
+                  </Form.Item>
                 </Col>
               </Row>
 
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="workingHours"
+                    label="Working Hours"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select working hours",
+                      },
+                    ]}
+                  >
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item
+                          name="startTime"
+                          label="Start Time"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select start time",
+                            },
+                          ]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            placeholder="Start Time"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="endTime"
+                          label="End Time"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select end time",
+                            },
+                          ]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            placeholder="End Time"
+                            style={{ width: "100%" }}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="employeeType"
+                    label="Employee Type"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select employee type",
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Please select employee type">
+                      <Select.Option value="fullTime">Full-Time</Select.Option>
+                      <Select.Option value="partTime">Part-Time</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
 
               <Row gutter={16}>
                 <Col
@@ -550,7 +642,6 @@ const MyCarer = () => {
                   </div>
                 </Col>
               </Row>
-
 
               <Row gutter={16}>
                 <Col span={12}>
