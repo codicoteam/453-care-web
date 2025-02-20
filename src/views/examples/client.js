@@ -242,7 +242,7 @@ const MyClient = () => {
     <>
       <Container className="mt--7 bg-white" fluid>
         <Drawer
-          title="Create a new carer"
+          title="Add a new Client"
           width={720}
           onClose={onClose}
           open={opend}
@@ -293,6 +293,7 @@ const MyClient = () => {
                   </Form.Item>
                 </Col>
               </Row>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
@@ -358,6 +359,44 @@ const MyClient = () => {
               </Row>
 
               <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="allergies"
+                    label="Allergies"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter allergies",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      rows={4} // You can adjust the number of rows as needed
+                      placeholder="Please enter allergies"
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    name="dateOfBirth" // Changed name to use camelCase, since it's more common in JS
+                    label="Date Of Birth"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your Date of Birth",
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      placeholder="Please select Date of Birth"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
                     name="medicalAidInfo"
@@ -371,6 +410,45 @@ const MyClient = () => {
                     <Input.TextArea
                       rows={4}
                       placeholder="Please enter medical aid info"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="medicalHistory"
+                    label="Medical History"
+                    rules={[
+                      {
+                        required: false, // You can change to 'true' if this is a required field
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      rows={4}
+                      placeholder="Please enter medical history"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              {/* Add Family Member IDs Field with Reduced Size */}
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="familyMemberIds"
+                    label="Family Member IDs"
+                    rules={[
+                      {
+                        required: false, // You can change to 'true' if this is a required field
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      rows={2} // Reduced the number of rows for a smaller field
+                      placeholder="Please enter family member IDs (comma separated)"
                     />
                   </Form.Item>
                 </Col>
@@ -746,8 +824,7 @@ const MyClient = () => {
                           </div>
                           <div className="col text-right">
                             <div className="col text-right">
-                              <MdPreview 
-
+                              <MdPreview
                                 size={24} // Adjust the size as needed
                                 style={{ cursor: "pointer", color: "primary" }} // Style the icon
                                 onClick={() => setOpenf(true)} // Attach the onClick handler
