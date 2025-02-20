@@ -516,7 +516,11 @@ const MyCarer = () => {
                   >
                     <Input placeholder="Please enter contact number" />
                   </Form.Item>
+                </Col>
+              </Row>
 
+              <Row gutter={16}>
+                <Col span={12}>
                   <Form.Item
                     name="password"
                     label="Password"
