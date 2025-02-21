@@ -185,21 +185,21 @@ const MyClient = () => {
       const clientData = {
         firstName: values.firstname,
         lastName: values.lastname,
+        dateOfBirth: values.dateOfBirth,
         gender: values.gender,
-        allergies: ["Peanuts", "Dust"],
+        allergies: values.allergies,
         email: values.email,
         familyMemberIds: [],
         medicalHistory: [
           {
-            condition: "Hypertension",
-            startDate: "2021-01-01",
-            status: "Chronic",
+            condition: values.condition,
+            startDate: values.startDate,
+            status: values.status,
           },
         ],
 
         medicalAidInfo: values.medicalAidInfo,
         profilePicture: "djhedhuieuidfiufbeifbeiu",
-        dateOfBirth: "djhedhuieuidfiufbeifbeiu",
 
         contactNumber: values.contactnumber,
         address: values.address,
@@ -416,20 +416,52 @@ const MyClient = () => {
               </Row>
 
               <Row gutter={16}>
-                <Col span={24}>
+                <Col span={12}>
                   <Form.Item
-                    name="medicalHistory"
-                    label="Medical History"
+                    name="condition"
+                    label="Condition"
                     rules={[
                       {
-                        required: false, // You can change to 'true' if this is a required field
+                        required: true,
+                        message: "Please enter the medical condition",
                       },
                     ]}
                   >
-                    <Input.TextArea
-                      rows={4}
-                      placeholder="Please enter medical history"
-                    />
+                    <Input placeholder="Please enter medical condition" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="startDate"
+                    label="Start Date"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter the start date of the condition",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Please enter start date" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="status"
+                    label="Status"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the condition status",
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Please select status">
+                      <Select.Option value="chronic">Chronic</Select.Option>
+                      <Select.Option value="acute">Acute</Select.Option>
+                      <Select.Option value="controlled">
+                        Controlled
+                      </Select.Option>
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>

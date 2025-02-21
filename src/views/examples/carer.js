@@ -351,15 +351,15 @@ const MyCarer = () => {
       const carerData = {
         firstName: values.firstname,
         lastName: values.lastname,
-        profilePicture: imageUrl, // Example static valueimageUrl
+        profilePicture: " ", // Example static valueimageUrl
         email: values.email,
         contactNumber: values.contactnumber,
         address: values.address,
         specialization: values.specialization,
-        employmentType: "Full-time", // Example static value
+        employmentType: values.employeetype, // Example static value
         workingHours: {
-          startHour: "09:30",
-          endHour: "07:30",
+          startHour: values.startTime,
+          endHour: values.endTime,
         },
         hasCar: values.hasCar || false,
         carDetails: values.carDetails || "",
@@ -597,7 +597,7 @@ const MyCarer = () => {
               <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
-                    name="employeeType"
+                    name="employeetype"
                     label="Employee Type"
                     rules={[
                       {
