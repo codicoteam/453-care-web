@@ -33,7 +33,6 @@ const EditTask = ({ open, onClose, task }) => {
   const [visitloading, setVisitLoading] = useState(true);
   const [errorVisit, setErrorVisit] = useState(null);
 
-
   useEffect(() => {
     if (task) {
       form.setFieldsValue({
@@ -59,7 +58,6 @@ const EditTask = ({ open, onClose, task }) => {
     fetchVisits();
   }, []);
 
-
   const handleSubmit = () => {
     form
       .validateFields()
@@ -67,7 +65,7 @@ const EditTask = ({ open, onClose, task }) => {
         // Prepare data for the API
         const updatedData = {
           ...values,
-       
+
           status: values.status,
           name: values.name,
           description: values.description,
@@ -119,7 +117,7 @@ const EditTask = ({ open, onClose, task }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter name",
+                    message: "Please enter  name",
                   },
                 ]}
               >
@@ -180,11 +178,9 @@ const EditTask = ({ open, onClose, task }) => {
                 </Select>
               </Form.Item>
             </Col>
-          
           </Row>
 
           <Row gutter={16}>
-            
             <Col span={12}>
               <Form.Item
                 name="description"

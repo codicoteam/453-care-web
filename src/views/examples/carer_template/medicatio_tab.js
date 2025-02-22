@@ -2,59 +2,22 @@ import CustomNoData from "components/nodata/no_data";
 import CustomSkeleton from "components/skeletons/custom_skeleton";
 import React, { useEffect, useState } from "react";
 import MedicationService from "services/medication_services/medication_services";
-import ObservationsService from "services/observations_services/observations_services";
 import { IoIosAdd } from "react-icons/io";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { Row, Button } from "antd";
+import { Row, Button, Modal } from "antd";
+import { showMessage } from "helper/feedback_message_helper";
+import { Form, Input, Select } from "antd";
 
 const MedicationTab = ({ visitId }) => {
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [form] = Form.useForm();
+  const [selectedMedication, setSelectedMedication] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [frequency, setFrequency] = useState("daily");
-  const [selectedDays, setSelectedDays] = useState([]);
-
-  const typeOfMedication = [
-    "Scheduled",
-    "PRN",
-    "Blister pack"
-
-  ];
-
-
-  const medicationSupport = [
-    "Adminster",
-    "Assist",
-    "Prompt"
-
-  ];
-
-  const dose = [
-    "quantity",
-    "Range",
-    "Other"
-
-  ];
-
-  const frequencyuse = [
-    "Daily",
-    "Custom",
-
-  ];
-
-  const routee = [
-    "Oral",
-    "Other",
-
-  ];
-
-
-
-
-  const timeSlots = ["Morning", "Afternoon", "Evening", "Night"];
-
+  // Add the missing style definitions here:
   const formContainerStyle = {
     padding: "1.5rem",
     backgroundColor: "white",
@@ -69,91 +32,8 @@ const MedicationTab = ({ visitId }) => {
     marginBottom: "1rem",
   };
 
-  const formGroupStyle = {
-    marginBottom: "1rem",
-  };
-
-  const labelStyle = {
-    display: "block",
-    fontSize: "0.875rem",
-    fontWeight: 500,
-    marginBottom: "0.25rem",
-  };
-
-  const inputStyle = {
-    width: "100%",
-    padding: "0.5rem",
-    border: "1px solid #e5e7eb",
-    borderRadius: "0.375rem",
-  };
-
-  const checkboxContainerStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-  };
-
-  const buttonContainerStyle = {
-    display: "flex",
-    gap: "0.5rem",
-    flexWrap: "wrap",
-  };
-
-  const getFrequencyButtonStyle = (option) => ({
-    padding: "0.5rem 1rem",
-    borderRadius: "0.5rem",
-    transition: "all 0.2s",
-    border: "2px solid transparent",
-    backgroundColor: frequency === option ? "#dcfce7" : "#f9fafb",
-    color: frequency === option ? "#166534" : "#374151",
-    textTransform: "capitalize",
-    cursor: "pointer",
-    ":hover": {
-      borderColor: "#22c55e",
-    },
-  });
-
-  const getDayButtonStyle = (day) => ({
-    padding: "0.5rem 1rem",
-    borderRadius: "0.5rem",
-    transition: "all 0.2s",
-    border: "2px solid transparent",
-    backgroundColor: selectedDays.includes(day) ? "#dcfce7" : "#f9fafb",
-    color: selectedDays.includes(day) ? "#166534" : "#374151",
-    cursor: "pointer",
-    ":hover": {
-      borderColor: "#22c55e",
-    },
-  });
-
-  const timeSlotButtonStyle = {
-    padding: "0.5rem 1rem",
-    borderRadius: "0.5rem",
-    backgroundColor: "#f9fafb",
-    border: "2px solid transparent",
-    cursor: "pointer",
-    ":hover": {
-      borderColor: "#22c55e",
-    },
-  };
-
-  const submitButtonStyle = {
-    backgroundColor: "#16a34a",
-    color: "white",
-    padding: "0.5rem 1rem",
-    borderRadius: "0.375rem",
-    cursor: "pointer",
-    ":hover": {
-      backgroundColor: "#15803d",
-    },
-  };
-
   const handleDaySelect = (day) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter((d) => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
+    // Handle frequency selection
   };
 
   useEffect(() => {
@@ -176,6 +56,43 @@ const MedicationTab = ({ visitId }) => {
     fetchMedication();
   }, [visitId]);
 
+  const handleFinish = async (values) => {
+    setLoading(true);
+    try {
+      const newMedication = {
+        name: values.name,
+        description: values.description,
+        status: values.status,
+        frequency: values.frequency,
+        dosage: values.dosage,
+        visitId: visitId,
+        prescribedBy: "675ebf0a6cd21d8db1a29697", // Placeholder for the assignedBy field
+        clientId: "675eaa3279915a77996c8884", // Placeholder for the clientId
+      };
+
+      const response = await MedicationService.postMedications(newMedication);
+
+      setMedications((prevMedications) => [...prevMedications, response.data]);
+
+      showMessage("success", "Medication added successfully!");
+      setLoading(false);
+      setShowForm(false);
+    } catch (error) {
+      showMessage("error", "Failed to add Medication. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  const handleViewMore = (medication) => {
+    setSelectedMedication(medication);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedMedication(null);
+  };
+
   return (
     <div>
       <Row>
@@ -189,146 +106,91 @@ const MedicationTab = ({ visitId }) => {
               color: "white",
               borderColor: "green",
             }}
-            onClick={() => setShowForm(!showForm)} // Toggle the state
+            onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? <IoMdArrowRoundBack /> : <IoIosAdd size={25} />}{" "}
-            {/* Toggle button text */}
-            {showForm ? "Back to Medictions" : "Add Mediction"}{" "}
-            {/* Toggle button text */}
+            {showForm ? <IoMdArrowRoundBack /> : <IoIosAdd size={25} />}
+            {showForm ? "Back to Medictions" : "Add Mediction"}
           </Button>
         </div>
       </Row>
 
       {showForm ? (
-        // Show the form if `showForm` is true
         <div style={formContainerStyle}>
           <h4 style={headingStyle}>Add New Medication</h4>
-          <form>
-            <div style={formGroupStyle}>
-              <label htmlFor="Medication Name" style={labelStyle}>
-              Medication Name
-              </label>
-              <input
-                type="text"
-                style={inputStyle}
-                id="medicationName"
-                placeholder="Enter medication name"
-              />
-            </div>
-
-            
-
-           
-
-            <div style={formGroupStyle}>
-                <label style={labelStyle}>What support is requred for this medication?</label>
-                <div style={buttonContainerStyle}>
-                  {medicationSupport.map((medsuport) => (
-                    <button
-                      key={medsuport}
-                      type="button"
-                      onClick={() => handleDaySelect(medsuport)}
-                      style={getDayButtonStyle(medsuport)}
-                    >
-                      {medsuport}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <br></br>
-
-           
-
-              <div style={formGroupStyle}>
-                <label style={labelStyle}>What type of medication is this?</label>
-                <div style={buttonContainerStyle}>
-                  {typeOfMedication.map((typemedication) => (
-                    <button
-                      key={typemedication}
-                      type="button"
-                      onClick={() => handleDaySelect(typemedication)}
-                      style={getDayButtonStyle(typemedication)}
-                    >
-                      {typemedication}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <br></br>
-
-
-              <div style={formGroupStyle}>
-                <label style={labelStyle}>What is the dose for this medication?</label>
-                <div style={buttonContainerStyle}>
-                  {dose.map((dos) => (
-                    <button
-                      key={dos}
-                      type="button"
-                      onClick={() => handleDaySelect(dos)}
-                      style={getDayButtonStyle(dos)}
-                    >
-                      {dos}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <br></br>
-
-              <div style={formGroupStyle}>
-                <label style={labelStyle}>What is the dose for this medication?</label>
-                <div style={buttonContainerStyle}>
-                  {routee.map((rout) => (
-                    <button
-                      key={rout}
-                      type="button"
-                      onClick={() => handleDaySelect(rout)}
-                      style={getDayButtonStyle(rout)}
-                    >
-                      {rout}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <br></br>
-
-
-
-              <div style={formGroupStyle}>
-                <label style={labelStyle}>How often is this medication taken ?</label>
-                <div style={buttonContainerStyle}>
-                  {frequencyuse.map((freuse) => (
-                    <button
-                      key={freuse}
-                      type="button"
-                      onClick={() => handleDaySelect(freuse)}
-                      style={getDayButtonStyle(freuse)}
-                    >
-                      {freuse}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <br></br>
-
-         
-
-            <div style={formGroupStyle}>
-              <label htmlFor="taskStatus" style={labelStyle}>
-                Status
-              </label>
-              <select style={inputStyle} id="taskStatus">
-                <option value="Pending">Pending</option>
-                <option value="Taken">Taken</option>
-              </select>
-            </div>
-
-            <Button type="submit" style={submitButtonStyle}>
-              Save Task
-            </Button>
-          </form>
+          <Form form={form} layout="vertical" onFinish={handleFinish}>
+            <Form.Item
+              label="Medication"
+              name="name"
+              rules={[
+                { required: true, message: "Please enter the medication name" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the medication description",
+                },
+              ]}
+            >
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
+              label="Frequency"
+              name="frequency"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select the frequency for medication",
+                },
+              ]}
+            >
+              <Select placeholder="Select frequency">
+                <Select.Option value="Once A Day">Once A Day</Select.Option>
+                <Select.Option value="Twice A day">Twice A day</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Dosage"
+              name="dosage"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the medication dosage",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select the medication status",
+                },
+              ]}
+            >
+              <Select placeholder="Select Status">
+                <Select.Option value="Pending">Pending</Select.Option>
+                <Select.Option value="Taken">Taken</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ backgroundColor: "green", borderColor: "green" }}
+              >
+                Add Medication
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       ) : loading ? (
         <CustomSkeleton height="200px" width="100%" />
@@ -342,16 +204,11 @@ const MedicationTab = ({ visitId }) => {
               className="pl-3 pr-3 mx-2 bg-white rounded-lg shadow border border-gray-200 p-4 mb-5 max-w-sm hover:shadow-lg hover:scale-105 transition-transform duration-200"
             >
               <h4 className="mb-2 text-gray-700">Name: {medication.name}</h4>
-
               <h4 className="mb-2 text-gray-700">
                 Description: {medication.description}
               </h4>
               <h4 className="mb-2 text-gray-700">
                 Status: {medication.status}
-              </h4>
-
-              <h4 className="mb-2 text-gray-700">
-                Dosage: {medication.dosage}
               </h4>
               <h4 className="mb-2 text-gray-700">
                 Frequency: {medication.frequency}
@@ -360,7 +217,11 @@ const MedicationTab = ({ visitId }) => {
               <Row>
                 <div className="col"></div>
                 <div className="col text-right">
-                  <Button color="primary" href="#pablo" size="sm">
+                  <Button
+                    color="primary"
+                    onClick={() => handleViewMore(medication)}
+                    size="sm"
+                  >
                     View More
                   </Button>
                 </div>
@@ -373,6 +234,27 @@ const MedicationTab = ({ visitId }) => {
           <CustomNoData width="70px" height="70px" />
         </div>
       )}
+
+      {/* Modal to show more details */}
+      <Modal
+        title="Medication Details"
+        visible={isModalVisible}
+        onCancel={handleCloseModal}
+        footer={null}
+        width={600}
+      >
+        {selectedMedication ? (
+          <div>
+            <h4>Name: {selectedMedication.name}</h4>
+            <h4>Description: {selectedMedication.description}</h4>
+            <h4>Status: {selectedMedication.status}</h4>
+            <h4>Frequency: {selectedMedication.frequency}</h4>
+            <h4>Dosage: {selectedMedication.dosage}</h4>
+            <h4>Prescribed By: {selectedMedication.prescribedBy}</h4>
+            {/* Add more fields as necessary */}
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 };

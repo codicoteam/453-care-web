@@ -5,12 +5,15 @@ import TaskService from "services/task_service/task_service";
 import { Row, Button } from "antd";
 import { IoIosAdd } from "react-icons/io";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { Modal, Input, Form, Select, List, Col } from "antd";
+import { showMessage } from "helper/feedback_message_helper";
 
 const TasksTab = ({ visitId }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [form] = Form.useForm();
 
   const [frequency, setFrequency] = useState("daily");
   const [selectedDays, setSelectedDays] = useState([]);
@@ -97,17 +100,6 @@ const TasksTab = ({ visitId }) => {
     },
   });
 
-  const timeSlotButtonStyle = {
-    padding: "0.5rem 1rem",
-    borderRadius: "0.5rem",
-    backgroundColor: "#f9fafb",
-    border: "2px solid transparent",
-    cursor: "pointer",
-    ":hover": {
-      borderColor: "#22c55e",
-    },
-  };
-
   const submitButtonStyle = {
     backgroundColor: "#16a34a",
     color: "white",
@@ -127,6 +119,7 @@ const TasksTab = ({ visitId }) => {
     }
   };
 
+  // Fetch tasks based on visitId when the component mounts
   useEffect(() => {
     const fetchTasks = async () => {
       if (!visitId) {
@@ -137,11 +130,8 @@ const TasksTab = ({ visitId }) => {
       setLoading(true);
       setError("");
 
-      setLoading(true);
-      setError("");
-
       try {
-        const response = await TaskService.getTaskByVisit(visitId);
+        const response = await TaskService.getTaskByVisit(visitId); // Using the service method
         setTasks(response.data || []);
       } catch (err) {
         setError(err.message || "Error fetching tasks");
@@ -153,6 +143,28 @@ const TasksTab = ({ visitId }) => {
     fetchTasks();
   }, [visitId]);
 
+  // Handle adding a new task
+  const handleFinish = async (values) => {
+    setLoading(true);
+    try {
+      const newTask = {
+        name: values.taskName,
+        description: values.taskDescription,
+        status: values.taskStatus,
+        visitId: visitId,
+        assignedBy: "675ebf0a6cd21d8db1a29697", // Placeholder for the assignedBy field
+      };
+
+      const response = await TaskService.postTask(newTask); // Using the service method
+      showMessage("success", "Task added successfully!");
+      setLoading(false);
+      setShowForm(false); // Hide form after submission
+    } catch (error) {
+      showMessage("error", "Failed to add task. Please try again.");
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <Row>
@@ -162,123 +174,76 @@ const TasksTab = ({ visitId }) => {
             href="#pablo"
             size="sm"
             style={{
-              backgroundColor:  showForm ? "grey" : "green",
+              backgroundColor: showForm ? "grey" : "green",
               color: "white",
               borderColor: "green",
             }}
-            onClick={() => setShowForm(!showForm)} // Toggle the state
+            onClick={() => setShowForm(!showForm)} // Toggle form visibility
           >
-            {showForm ? <IoMdArrowRoundBack /> : <IoIosAdd size={25} />}{" "}
-            {/* Toggle button text */}
+            {showForm ? <IoMdArrowRoundBack /> : <IoIosAdd size={25} />}
             {showForm ? "Back to Tasks" : "Add Task"} {/* Toggle button text */}
           </Button>
         </div>
       </Row>
 
       {showForm ? (
-        // Show the form if `showForm` is true
+        // Show the form if showForm is true
         <div style={formContainerStyle}>
           <h4 style={headingStyle}>Add New Task</h4>
-          <form>
-            <div style={formGroupStyle}>
-              <label htmlFor="taskName" style={labelStyle}>
-                Task Name
-              </label>
-              <input
-                type="text"
-                style={inputStyle}
-                id="taskName"
-                placeholder="Enter task name"
-              />
-            </div>
+          <Form form={form} layout="vertical" onFinish={handleFinish}>
+            <Form.Item
+              label="Task Name"
+              name="taskName"
+              rules={[
+                { required: true, message: "Please enter the task name" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-            <div style={formGroupStyle}>
-              <label htmlFor="taskDescription" style={labelStyle}>
-                Description
-              </label>
-              <textarea
-                style={inputStyle}
-                id="taskDescription"
-                placeholder="Enter task description"
-                rows="3"
-              />
-            </div>
+            <Form.Item
+              label="Description"
+              name="taskDescription"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter the task description",
+                },
+              ]}
+            >
+              <Input.TextArea />
+            </Form.Item>
 
-            <div style={formGroupStyle}>
-              <label style={checkboxContainerStyle}>
-                <input type="checkbox" />
-                <span style={{ fontSize: "0.875rem", fontWeight: 500 }}>
-                  Mark as Essential
-                </span>
-              </label>
-            </div>
+            <Form.Item
+              label="Status"
+              name="taskStatus"
+              rules={[
+                { required: true, message: "Please select the task status" },
+              ]}
+            >
+              <Select placeholder="Select Status">
+                <Select.Option value="Pending">Pending</Select.Option>
+                <Select.Option value="Completed">Completed</Select.Option>
+              </Select>
+            </Form.Item>
 
-            <div style={formGroupStyle}>
-              <label style={labelStyle}>Frequency</label>
-              <div style={buttonContainerStyle}>
-                {["daily", "weekly"].map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => setFrequency(option)}
-                    style={getFrequencyButtonStyle(option)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {frequency === "weekly" && (
-              <div style={formGroupStyle}>
-                <label style={labelStyle}>Select Days</label>
-                <div style={buttonContainerStyle}>
-                  {weekDays.map((day) => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => handleDaySelect(day)}
-                      style={getDayButtonStyle(day)}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div style={formGroupStyle}>
-              <label style={labelStyle}>Select Time</label>
-              <div style={buttonContainerStyle}>
-                {timeSlots.map((slot) => (
-                  <button key={slot} type="button" style={timeSlotButtonStyle}>
-                    {slot}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={formGroupStyle}>
-              <label htmlFor="taskStatus" style={labelStyle}>
-                Status
-              </label>
-              <select style={inputStyle} id="taskStatus">
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-
-            <Button type="submit" style={submitButtonStyle}>
-              Save Task
-            </Button>
-          </form>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ backgroundColor: "green", borderColor: "green" }}
+              >
+                Add Task
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       ) : loading ? (
         <CustomSkeleton height="200px" width="100%" />
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : tasks.length > 0 ? (
-        // Show the task list if `showForm` is false
+        // Show task list if there are tasks
         <div sm="6">
           {tasks.map((task) => (
             <div

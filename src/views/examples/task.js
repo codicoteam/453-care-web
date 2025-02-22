@@ -155,12 +155,11 @@ const MyTasks = () => {
       console.log("adding visit");
 
       const taskData = {
-        name: values.name,
+        name: values.taskname,
         description: values.description,
         visitId: "675efb52066f678498a2fee7",
         status: values.status,
         assignedBy: "675ebf0a6cd21d8db1a29697",
-       
       };
       console.log(taskData);
 
@@ -212,16 +211,16 @@ const MyTasks = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
-                    name="name"
-                    label="Name"
+                    name="taskname"
+                    label="Task Name"
                     rules={[
                       {
                         required: true,
-                        message: "Please enter name",
+                        message: "Please enter task name",
                       },
                     ]}
                   >
-                    <Input placeholder="Please enter name" />
+                    <Input placeholder="Enter Task " />
                   </Form.Item>
                 </Col>
               </Row>
@@ -241,13 +240,12 @@ const MyTasks = () => {
                       <Option value="Scheduled">Scheduled</Option>
                       <Option value="Ongoing">Ongoing</Option>
                       <Option value="Completed">Completed</Option>
-
                     </Select>
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={16}>
-              <Col span={12}>
+                <Col span={12}>
                   <Form.Item
                     name="description"
                     label="Description"
@@ -261,7 +259,6 @@ const MyTasks = () => {
                     <Input placeholder="Please enter description" />
                   </Form.Item>
                 </Col>
-
               </Row>
             </Form>
           )}
@@ -382,7 +379,6 @@ const MyTasks = () => {
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
-                   
                     </tr>
                   ) : error ? (
                     <tr>
@@ -401,7 +397,7 @@ const MyTasks = () => {
                           <div
                             style={{
                               color:
-                              task.status === "Pending"
+                                task.status === "Pending"
                                   ? "blue"
                                   : task.status === "Completed"
                                   ? "green"
@@ -411,7 +407,7 @@ const MyTasks = () => {
                             {task.status}
                           </div>
                         </th>
-                       
+
                         <th scope="row">
                           <div className="row">
                             <div className="mr-2">
