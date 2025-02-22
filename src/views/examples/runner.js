@@ -117,7 +117,6 @@ const MyRunner = () => {
 
   useEffect(() => {
     const fetchRunners = async () => {
-
       try {
         const response = await RunnerService.getAllRunner();
         setRunners(response.data || []);
@@ -152,10 +151,14 @@ const MyRunner = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-    
+
       const runnerData = {
         name: values.name,
+        employeeId: values.employeeId,
+        visits: values.visits,
+        dateAssigned: values.dateAssigned,
       };
+
       console.log(runnerData);
 
       setAddLoading(true);
@@ -219,8 +222,53 @@ const MyRunner = () => {
                   </Form.Item>
                 </Col>
               </Row>
-             
-            
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="visits"
+                    label="Select Visits"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select one or more visits",
+                      },
+                    ]}
+                  >
+                    <Select
+                      mode="multiple"
+                      placeholder="Select visits"
+                      style={{ width: "100%" }}
+                      defaultValue={["", ""]} // Setting default values to empty strings
+                    >
+                      <Option value="">Visit 1</Option>
+                      <Option value="">Visit 2</Option>
+                      {/* Add more visit options here with an empty value if needed */}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="dateAssigned"
+                    label="Date Assigned"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a date",
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      placeholder="Select date"
+                      style={{ width: "100%" }}
+                      defaultValue={null} // Default empty value
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
           )}
         </Drawer>
@@ -321,6 +369,7 @@ const MyRunner = () => {
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Date Assigned</th>
+                    <th scope="col">Visits</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -336,7 +385,9 @@ const MyRunner = () => {
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
-                    
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
                     </tr>
                   ) : error ? (
                     <tr>
@@ -351,8 +402,10 @@ const MyRunner = () => {
                         <th scope="row">
                           <div>{runner.dateAssigned}</div>
                         </th>
-                    
-                       
+                        <th scope="row">
+                          <div>{runner.visits}</div>
+                        </th>
+
                         <th scope="row">
                           <div className="row">
                             <div className="mr-2">

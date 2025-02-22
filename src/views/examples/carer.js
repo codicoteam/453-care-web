@@ -520,27 +520,6 @@ const MyCarer = () => {
               </Row>
 
               <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name="password"
-                    label="Password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter a password",
-                      },
-                      {
-                        min: 6,
-                        message: "Password must be at least 6 characters",
-                      },
-                    ]}
-                  >
-                    <Input.Password placeholder="Please enter password" />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={16}>
                 <Col span={24}>
                   <Form.Item
                     name="workingHours"

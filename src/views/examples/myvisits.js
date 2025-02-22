@@ -50,6 +50,7 @@ import { showMessage } from "helper/feedback_message_helper";
 import CustomSpin from "components/customised_spins/customised_sprin";
 import EditVisit from "./visit_templates/edit_visit";
 import VisitDetailsModal from "./visit_templates/view_visit";
+import { TimePicker } from "antd";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -167,16 +168,16 @@ const MyVisits = () => {
         clientId: "675eaa3279915a77996c8884",
         careProfessionalId: "6763fbc6d9c0556eaea94214",
         DateOfVisit: "2024-12-15",
-        startTime: "2025-12-15T09:00:00Z",
-        endTime: "2024-11-15T10:00:00Z",
+        startTime: values.startTime,
+        endTime: values.endTime,
         status: values.status,
         location: {
           latitude: 39.7749,
           longitude: -182.4194,
           address: values.address,
         },
-        officialVisitTime: "",
-        officialEndTime: "",
+        officialVisitTime: values.officialVisitTime,
+        officialEndTime: values.officialEndTime,
       };
       console.log(visitData);
 
@@ -260,16 +261,58 @@ const MyVisits = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
-                    name="Working Time"
-                    label="Working Time"
+                    name="DateOfVisit"
+                    label="Date of Visit"
                     rules={[
                       {
                         required: true,
-                        message: "Please choose the working time",
+                        message: "Please select the date of visit",
                       },
                     ]}
                   >
-                    <DatePicker.RangePicker style={{ width: "100%" }} />
+                    <DatePicker
+                      placeholder="Select date of visit"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="officialVisitTime"
+                    label="Official Visit Time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the official visit time",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      placeholder="Select visit time"
+                      style={{ width: "100%" }}
+                      format="HH:mm"
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    name="officialEndTime"
+                    label="Official End Time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the official end time",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      placeholder="Select end time"
+                      style={{ width: "100%" }}
+                      format="HH:mm"
+                    />
                   </Form.Item>
                 </Col>
 
@@ -288,6 +331,45 @@ const MyVisits = () => {
                   </Form.Item>
                 </Col>
               </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="startTime"
+                    label="Start Time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the start time",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      placeholder="Select start time"
+                      style={{ width: "100%" }}
+                      format="HH:mm"
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    name="endTime"
+                    label="End Time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the end time",
+                      },
+                    ]}
+                  >
+                    <TimePicker
+                      placeholder="Select end time"
+                      style={{ width: "100%" }}
+                      format="HH:mm"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
           )}
         </Drawer>
@@ -301,7 +383,7 @@ const MyVisits = () => {
                     <h3 className="mb-0"> Assigned Visits</h3>
                   </div>
                   <Button color="success" onClick={showDrawer} variant="dashed">
-                    Add  Visit
+                    Add Visit
                   </Button>
                 </Row>
                 <Row className="align-items-center">
@@ -393,6 +475,7 @@ const MyVisits = () => {
                     <th scope="col">Date of Visit</th>
                     <th scope="col">Visit Status</th>
                     <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
 
                     <th scope="col">Action</th>
                   </tr>
@@ -400,6 +483,9 @@ const MyVisits = () => {
                 <tbody className="bg-violet">
                   {visitloading ? (
                     <tr>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
@@ -448,6 +534,10 @@ const MyVisits = () => {
                         <th scope="row">
                           <div>{visit.startTime}</div>
                         </th>
+                        <th scope="row">
+                          <div>{visit.endTime}</div>
+                        </th>
+
                         <th scope="row">
                           <div className="row">
                             <div className="mr-2">
