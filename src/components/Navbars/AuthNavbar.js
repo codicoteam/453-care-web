@@ -47,15 +47,14 @@ const AdminNavbar = () => {
           {/* Use `fluid` for full-width container */}
           <NavbarBrand to="/" tag={Link}>
             <a
-              className="avatar avatar-lg"
               href="#pablo"
               id="tooltip742438047"
               onClick={(e) => e.preventDefault()}
             >
               <img
                 alt="..."
-                className="rounded-circle"
-                src={require("../../assets/img/brand/logoHtc.jpeg")}
+                src={require("../../assets/img/brand/453.jpg")}
+                style={{ width: "60px", height: "60px" }}
               />
             </a>
 
@@ -136,7 +135,7 @@ const AdminNavbar = () => {
                   </span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
                   <i
                     className="fas fa-cogs text-2xl"
@@ -149,7 +148,7 @@ const AdminNavbar = () => {
                     Manage
                   </span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/myvisits" tag={Link}>
                   <i
@@ -164,7 +163,7 @@ const AdminNavbar = () => {
                   </span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
                   <i
                     className="fas fa-wallet text-2xl"
@@ -177,7 +176,7 @@ const AdminNavbar = () => {
                     Finance
                   </span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/myrunner" tag={Link}>
                   <i
@@ -188,7 +187,7 @@ const AdminNavbar = () => {
                     className="nav-link-inner--text text-blue-500 text-2xl font-semibold"
                     style={{ color: "blue" }}
                   >
-                    Route
+                    Runners
                   </span>
                 </NavLink>
               </NavItem>
@@ -219,7 +218,7 @@ const AdminNavbar = () => {
                   <Input placeholder="User Search" type="text" />
                 </InputGroup>
               </FormGroup>
-              <FormGroup className="mb-0 ml-3">
+              {/* <FormGroup className="mb-0 ml-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
@@ -235,7 +234,7 @@ const AdminNavbar = () => {
                     <option value="user3">User 3</option>
                   </select>
                 </InputGroup>
-              </FormGroup>
+              </FormGroup> */}
             </Nav>
           </UncontrolledCollapse>
         </Container>

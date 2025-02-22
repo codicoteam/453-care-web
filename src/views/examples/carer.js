@@ -298,6 +298,9 @@ const MyCarer = () => {
     setSelectedCarer(carer);
   };
 
+  console.log(selectedCarer);
+  
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState(null);
   const [deleteloading, setDeleteLoading] = useState(false);
@@ -322,7 +325,6 @@ const MyCarer = () => {
       setDeleteLoading(false);
     }
   };
-
   const [opend, setOpend] = useState(false);
 
   const showDrawer = () => {
@@ -650,13 +652,7 @@ const MyCarer = () => {
                 <Button onClick={showDrawer} color="success" variant="dashed">
                   Add New Carer
                 </Button>
-                <Row className="align-items-center">
-                  <div className="col mt-4">
-                    <h3 className="mb-0" style={{ color: "grey" }}>
-                      No user view recorded
-                    </h3>
-                  </div>
-                </Row>
+                
               </CardHeader>
 
               <Table className="align-items-center table-flush" responsive>
@@ -756,7 +752,7 @@ const MyCarer = () => {
               {selectedCarer ? (
                 <div className="p-3">
                   <div>
-                    {selectedCarer.profilePicture ? (
+                    {selectedCarer.profilePicture !== null ? (
                       <img
                         src={selectedCarer.profilePicture}
                         alt="Uploaded"
@@ -773,6 +769,7 @@ const MyCarer = () => {
                           width: "200px",
                           marginTop: "10px",
                           padding: "16px",
+                          height: "200px"
                         }}
                         size={64}
                         icon={<UserOutlined />}
@@ -1056,7 +1053,7 @@ const MyCarer = () => {
                                               width: "100%",
                                             }}
                                           >
-                                            <MapContainer
+                                            {/* <MapContainer
                                               center={[
                                                 visit?.location?.latitude,
                                                 visit?.location?.longitude,
@@ -1092,7 +1089,7 @@ const MyCarer = () => {
                                                   {visit?.location?.longitude}
                                                 </Popup>
                                               </Marker>
-                                            </MapContainer>
+                                            </MapContainer> */}
                                           </div>
                                         </>
                                       </div>
@@ -1103,18 +1100,9 @@ const MyCarer = () => {
                                     label: "Tasks",
                                     children: <TasksTab visitId={visit._id} />,
                                   },
+                                 
                                   {
                                     key: "3",
-                                    label: "Care Teams",
-                                    children: (
-                                      <div>
-                                        <p>This is the first text in Tab 3.</p>
-                                        <p>This is the second text in Tab 3.</p>
-                                      </div>
-                                    ),
-                                  },
-                                  {
-                                    key: "4",
                                     label: "Observations",
                                     children: (
                                       <ObservationsTab visitId={visit._id} />
@@ -1122,7 +1110,7 @@ const MyCarer = () => {
                                   },
 
                                   {
-                                    key: "5",
+                                    key: "4",
                                     label: "Vitals",
                                     children: <VitalsTab visitId={visit._id} />,
                                   },
@@ -1230,8 +1218,7 @@ const MyCarer = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="p-3">
-                    <h4>No assessments found for this carer.</h4>
+                  <div className="p-3 m-4">
                     <CustomNoData width="70px" height="70px" />
                   </div>
                 )
@@ -1241,33 +1228,9 @@ const MyCarer = () => {
                 </div>
               )}
 
-              <Row className="align-items-center pl-3">
-                <div className="col mt-4">
-                  <h3 className="mb-0" style={{ color: "red" }}>
-                    0 Expiring within 1 Month
-                  </h3>
-                </div>
-              </Row>
+            
             </Card>
 
-            <Card className="shadow mt-3">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h2 className="mb-0">Family Members</h2>
-                  </div>
-                </Row>
-              </CardHeader>
-
-              <div className=" pl-3 pr-3 ">
-                <h3 className="mb-0" style={{ color: "black" }}>
-                  Tinashe Kasongo
-                </h3>
-
-                <h4 className="mb-2">Carers: Elliot Williams</h4>
-                <h4 className="mb-2">Occured: 09/12/2020</h4>
-              </div>
-            </Card>
           </Col>
         </Row>
 

@@ -576,7 +576,7 @@ const MyClient = () => {
               )}
             </Card>
 
-            <Card className="shadow mb-3">
+            {/* <Card className="shadow mb-3">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
@@ -630,7 +630,7 @@ const MyClient = () => {
                   </h4>
                 </div>
               </div>
-            </Card>
+            </Card> */}
           </Col>
           <Col xl="3">
             <Card className="shadow">
@@ -660,13 +660,7 @@ const MyClient = () => {
                   </div>
                 </Row>
               </div>
-              <Row className="align-items-center pl-3">
-                <div className="col mt-4">
-                  <h3 className="mb-0" style={{ color: "red" }}>
-                    0 Expiring within 1 Month
-                  </h3>
-                </div>
-              </Row>
+             
             </Card>
 
             <Card className="shadow mt-3">

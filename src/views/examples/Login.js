@@ -2,7 +2,7 @@ import CustomSpin from "components/customised_spins/customised_sprin";
 import { showMessage } from "helper/feedback_message_helper";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoHtc from "../../assets/img/brand/logoHtc.jpeg";
+import logoHtc from "../../assets/img/brand/453.jpg";
 
 import {
   Button,
@@ -62,8 +62,6 @@ const Login = () => {
       }}
     >
 
-{/* ../../assets/img/brand/logoHtc.jpeg */}
-      {/* Background image with transparency */}
       <img
          src={logoHtc}
         alt="Background"

@@ -40,6 +40,7 @@ import {
   DatePicker,
   Drawer,
   Modal,
+  AutoComplete,
   Form,
   Switch,
   Select,
@@ -196,6 +197,31 @@ const MyVisits = () => {
     }
   };
 
+
+  const [options, setOptions] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleSearch = (value) => {
+    const filteredOptions = visits
+      .filter((visit) => typeof visit.location === "string" && visit.location.toLowerCase().includes(value.toLowerCase()))
+      .map((visit) => ({
+        value: visit.location,
+      }));
+    setOptions(filteredOptions);
+  };
+
+  const onSelect = (value) => {
+    const visit = visits.find((v) => v.location === value);
+    if (visit) {
+      setSelectedVisit(visit);
+      setIsModalVisible(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <>
       <Container className="mt--7 bg-white" fluid>
@@ -301,63 +327,10 @@ const MyVisits = () => {
                     <h3 className="mb-0"> Assigned Visits</h3>
                   </div>
                   <Button color="success" onClick={showDrawer} variant="dashed">
-                    Add  Visit
+                    Add Visit
                   </Button>
                 </Row>
-                <Row className="align-items-center">
-                  <div className="col mt-4">
-                    <h3 className="mb-0" style={{ color: "red" }}>
-                      8 Required
-                    </h3>
-                  </div>
-                </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Description</th>
-                    <th scope="col"> Carers</th>
-                    <th scope="col"> Client</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">Cleaning the Patient</th>
-                    <td>2 Carers</td>
-                    <td>Peter</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Give Medication</th>
-                    <td>1 Carer</td>
-                    <td>Trymore</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Food Preparation</th>
-                    <td>2 Carer</td>
-                    <td>Gift</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card>
-            <Card className="shadow mt-3">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    <h3 className="mb-0">Finished Visits</h3>
-                  </div>
-                </Row>
-              </CardHeader>
-
-              <div className="pl-3 mb-3">
-                <h4 className="mb-1">Required Hours: 1435h.35m</h4>
-                <h4 className="mb-1">Booked Hours: 543h.32m</h4>
-                <h4 className="mb-1">Carers working this week: 7</h4>
-                <h4 className="mb-1">Number of active carers: 23</h4>
-                <h4 className="mb-2">Number of active carers: 23</h4>
-                <h4 className="mb-1" style={{ color: "blue" }}>
-                  View All
-                </h4>
-              </div>
             </Card>
           </Col>
           <Col className="mb-5 mb-xl-0" xl="8">
@@ -376,13 +349,39 @@ const MyVisits = () => {
                   </h4>
                 </div>
                 <div className="col text-right">
-                  <Search
-                    placeholder="10:20 - 11:30"
-                    enterButton="Go"
-                    size="large"
-                    suffix={suffix}
-                    onSearch={onSearch}
-                  />
+                  <AutoComplete
+                    options={options}
+                    onSearch={handleSearch}
+                    onSelect={onSelect}
+                    style={{ width: "100%" }}
+                  >
+                    <Search
+                      placeholder="Search Visit"
+                      enterButton="Search"
+                      size="large"
+                    />
+                  </AutoComplete>
+
+                  <Modal
+                    title="Visit Details"
+                    visible={isModalVisible}
+                    onCancel={handleModalClose}
+                    footer={null}
+                  >
+                    {selectedVisit && (
+                      <div>
+                        <p>
+                          <strong>Location:</strong> {selectedVisit.location}
+                        </p>
+                        <p>
+                          <strong>Date:</strong> {selectedVisit.date}
+                        </p>
+                        <p>
+                          <strong>Details:</strong> {selectedVisit.details}
+                        </p>
+                      </div>
+                    )}
+                  </Modal>
                 </div>
               </Row>
 
