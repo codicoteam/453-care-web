@@ -157,6 +157,8 @@ const MyRunner = () => {
         employeeId: values.employeeId,
         visits: values.visits,
         dateAssigned: values.dateAssigned,
+        description: values.description,
+        status: values.status,
       };
 
       console.log(runnerData);
@@ -246,11 +248,41 @@ const MyRunner = () => {
                       {/* Add more visit options here with an empty value if needed */}
                     </Select>
                   </Form.Item>
+
+                  <Form.Item
+                    label="Description"
+                    name="decription"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter the runner description",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea />
+                  </Form.Item>
                 </Col>
               </Row>
 
               <Row gutter={16}>
                 <Col span={12}>
+                  <Form.Item
+                    label="Status"
+                    name="status"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select the runner status",
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Select Status">
+                      <Select.Option value="scheduled">scheduled</Select.Option>
+                      <Select.Option value="ongoing">Ongoing</Select.Option>
+                      <Select.Option value="completed">completed</Select.Option>
+                    </Select>
+                  </Form.Item>
+
                   <Form.Item
                     name="dateAssigned"
                     label="Date Assigned"
@@ -370,12 +402,20 @@ const MyRunner = () => {
                     <th scope="col">Name</th>
                     <th scope="col">Date Assigned</th>
                     <th scope="col">Visits</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-violet">
                   {runnerloading ? (
                     <tr>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
@@ -404,6 +444,12 @@ const MyRunner = () => {
                         </th>
                         <th scope="row">
                           <div>{runner.visits}</div>
+                        </th>
+                        <th scope="row">
+                          <div>{runner.description}</div>
+                        </th>
+                        <th scope="row">
+                          <div>{runner.status}</div>
                         </th>
 
                         <th scope="row">

@@ -1133,7 +1133,7 @@ const MyCarer = () => {
                                               width: "100%",
                                             }}
                                           >
-                                            <MapContainer
+                                            {/* <MapContainer
                                               center={[
                                                 visit?.location?.latitude,
                                                 visit?.location?.longitude,
@@ -1169,7 +1169,7 @@ const MyCarer = () => {
                                                   {visit?.location?.longitude}
                                                 </Popup>
                                               </Marker>
-                                            </MapContainer>
+                                            </MapContainer> */}
                                           </div>
                                         </>
                                       </div>
