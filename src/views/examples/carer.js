@@ -1127,6 +1127,43 @@ const MyCarer = () => {
                                           <h4>
                                             Address: {visit?.location?.address}
                                           </h4>
+
+                                          <div
+                                            style={{
+                                              overflow: "hidden",
+                                              resize: "none",
+                                              maxWidth: "100%",
+                                              width: "500px",
+                                              height: "500px",
+                                            }}
+                                          >
+                                            <div
+                                              id="embed-ded-map-canvas"
+                                              style={{
+                                                height: "100%",
+                                                width: "100%",
+                                                maxWidth: "100%",
+                                              }}
+                                            >
+                                              <iframe
+                                                style={{
+                                                  height: "100%",
+                                                  width: "100%",
+                                                  border: "0",
+                                                }}
+                                                frameBorder="0"
+                                                src="https://www.google.com/maps/embed/v1/place?q=${visit.location.latitude},${visit.location.longitude}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"
+                                              ></iframe>
+                                            </div>
+                                            <a
+                                              className="google-map-code-enabler"
+                                              href="https://www.bootstrapskins.com/themes"
+                                              id="make-map-data"
+                                            >
+                                              premium bootstrap themes
+                                            </a>
+                                          </div>
+
                                           <div
                                             style={{
                                               height: "300px",
