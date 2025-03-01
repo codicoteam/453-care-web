@@ -72,6 +72,9 @@ import { supabase } from "helper/supabase/supabaseClient";
 import VitalsTab from "./carer_template/vitals_tab";
 import UserLocationMap from "./visit_templates/visit_map";
 import { TimePicker } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+
+import { Dropdown, Typography } from "antd";
 
 const { Option } = Select;
 
@@ -150,6 +153,7 @@ const MyCarer = () => {
     fetchCarers();
   }, []);
   const [selectedCarer, setSelectedCarer] = useState(null);
+  const [selectedCarerid, setSelectedCarerid] = useState(null);
 
   useEffect(() => {
     const fetchVisit = async () => {
@@ -299,9 +303,16 @@ const MyCarer = () => {
     setSelectedCarer(carer);
   };
 
+  const handleSelectCarerid = (carerId) => {
+    setSelectedCarerid(carerId);
+  };
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedVisitId, setSelectedVisitId] = useState(null);
   const [deleteloading, setDeleteLoading] = useState(false);
+  const [selectedVisitIdUpdate, setSelectedVisitIdUpdate] = useState(null);
+  //
+  console.log("my visit selected ", selectedVisitIdUpdate);
 
   const handleDeleteClick = (carerId) => {
     setSelectedVisitId(carerId);
@@ -429,6 +440,63 @@ const MyCarer = () => {
   const handleUpdate = (updatedData) => {
     console.log("Updated Employee Data:", updatedData);
     // Add logic to update the employee details in your backend or state
+  };
+
+  const itemss = [
+    {
+      key: "1",
+      label: "Item 1",
+    },
+    {
+      key: "2",
+      label: "Item 2",
+    },
+    {
+      key: "3",
+      label: "Item 3",
+    },
+  ];
+
+  console.log(visits);
+
+  const handleUpdateVisitbyProfessionalId = async () => {
+    try {
+      console.log("adding visit");
+
+      // Ensure that visits and visits._id are defined
+      if (!selectedVisitIdUpdate) {
+        console.error("Visit ID is missing");
+        showMessage("Visit ID is missing! Please select a visit.");
+        return; // Exit early since we can't proceed without a visit ID
+      }
+
+      // Ensure selectedCarerid is defined
+      if (!selectedCarerid) {
+        console.error("Selected carer ID is missing");
+        showMessage("Selected carer ID is missing!");
+        return;
+      }
+
+      const visitData = {
+        careProfessionalId: selectedCarerid,
+      };
+      console.log(visitData);
+
+      setAddLoading(true);
+      const response = await VisitsService.updateVisitById(
+        selectedVisitIdUpdate,
+        visitData
+      );
+      console.log(response.status);
+      showMessage("success", "update visit successfully!");
+
+      form.resetFields();
+      onClose();
+    } catch (error) {
+      showMessage("Something went wrong!");
+    } finally {
+      setAddLoading(false);
+    }
   };
 
   return (
@@ -1071,7 +1139,10 @@ const MyCarer = () => {
                               <Button
                                 color="primary"
                                 href="#pablo"
-                                onClick={() => setOpen(true)}
+                                onClick={() => {
+                                  setSelectedVisitIdUpdate(visit._id);
+                                  setOpen(true);
+                                }}
                                 size="sm"
                               >
                                 View More
@@ -1222,8 +1293,34 @@ const MyCarer = () => {
                                     label: "Care Teams",
                                     children: (
                                       <div>
-                                        <p>This is the first text in Tab 3.</p>
-                                        <p>This is the second text in Tab 3.</p>
+                                        <Select
+                                          style={{ width: 200 }}
+                                          placeholder="Select an item"
+                                          onChange={handleSelectCarerid}
+                                          value={selectedCarerid}
+                                        >
+                                          {carers.map((item) => (
+                                            <Option
+                                              key={item._id}
+                                              value={item._id}
+                                              onClick={() =>
+                                                handleSelectCarerid(item._id)
+                                              }
+                                            >
+                                              {item.firstName}
+                                            </Option>
+                                          ))}
+                                        </Select>
+                                        <Button
+                                          type="primary"
+                                          onClick={
+                                            handleUpdateVisitbyProfessionalId
+                                          }
+                                          loading={addloading}
+                                          style={{ marginTop: 10 }}
+                                        >
+                                          Update
+                                        </Button>
                                       </div>
                                     ),
                                   },
