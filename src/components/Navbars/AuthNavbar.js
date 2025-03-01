@@ -55,13 +55,13 @@ const AdminNavbar = () => {
               <img
                 alt="..."
                 className="rounded-circle"
-                src={require("../../assets/img/brand/logoHtc.jpeg")}
+                src={require("../../assets/img/brand/logo.jpg")}
               />
             </a>
 
             {/* <img
               alt="..."
-              src={require("../../assets/img/brand/logoHtc.jpeg")}
+              src={require("../../assets/img/brand/logo.jpg")}
               style={{ width: "70px", height: "50px" }}
             /> */}
           </NavbarBrand>
@@ -75,7 +75,7 @@ const AdminNavbar = () => {
                   <Link to="/">
                     <img
                       alt="..."
-                      src={require("../../assets/img/brand/logoHtc.jpeg")}
+                      src={require("../../assets/img/brand/logo.jpg")}
                     />
                   </Link>
                 </Col>
@@ -89,7 +89,11 @@ const AdminNavbar = () => {
             </div>
             <Nav className="ml-auto align-items-center d-flex" navbar>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/mydashboard" tag={Link}>
+                <NavLink
+                  className="nav-link-icon"
+                  to="/auth/mydashboard"
+                  tag={Link}
+                >
                   <i
                     className="fas fa-tachometer-alt text-2xl"
                     style={{ color: "blue" }}
@@ -136,7 +140,7 @@ const AdminNavbar = () => {
                   </span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
                   <i
                     className="fas fa-cogs text-2xl"
@@ -149,9 +153,13 @@ const AdminNavbar = () => {
                     Manage
                   </span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/myvisits" tag={Link}>
+                <NavLink
+                  className="nav-link-icon"
+                  to="/auth/myvisits"
+                  tag={Link}
+                >
                   <i
                     className="fas fa-chart-line text-2xl"
                     style={{ color: "blue" }}
@@ -164,7 +172,7 @@ const AdminNavbar = () => {
                   </span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
                   <i
                     className="fas fa-wallet text-2xl"
@@ -177,9 +185,13 @@ const AdminNavbar = () => {
                     Finance
                   </span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/myrunner" tag={Link}>
+                <NavLink
+                  className="nav-link-icon"
+                  to="/auth/myrunner"
+                  tag={Link}
+                >
                   <i
                     className="fas fa-user-shield text-blue-500 text-2xl"
                     style={{ color: "blue" }}
@@ -193,9 +205,12 @@ const AdminNavbar = () => {
                 </NavLink>
               </NavItem>
 
-
               <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/carerequired" tag={Link}>
+                <NavLink
+                  className="nav-link-icon"
+                  to="/auth/carerequired"
+                  tag={Link}
+                >
                   <i
                     className="fas fa-user-shield text-blue-500 text-2xl"
                     style={{ color: "blue" }}
