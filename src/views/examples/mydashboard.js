@@ -42,8 +42,12 @@ import { Input, Space, Pie, Bar } from "antd";
 import PrimaryButton from "components/buttons/primary_button";
 import Chart from "chart.js"; // ✅ Import Chart.js v2 correctly
 import { Pie as PieChart, Bar as BarChart, Doughnut } from "react-chartjs-2";
+import CarerService from "services/carer_services/carer_service";
 import VisitsService from "services/visits_service/visits_service.js";
-// Adjust path if needed
+import { useEffect, useState } from "react";
+import { PieChartRounded } from "@mui/icons-material";
+
+// Adjust path if needed,
 
 const { Search } = Input;
 const suffix = (
@@ -57,29 +61,6 @@ const suffix = (
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 // Sample data - replace with actual backend fetched data
-const visitsData = {
-  labels: ["Pending", "Ongoing", "Completed"],
-  datasets: [
-    {
-      data: [25, 15, 60],
-      backgroundColor: ["#ffc107", "#17a2b8", "#28a745"],
-      borderColor: ["#fff", "#fff", "#fff"],
-      borderWidth: 2,
-    },
-  ],
-};
-
-const carersData = {
-  labels: ["Active", "On Leave", "In Training", "New Hires"],
-  datasets: [
-    {
-      data: [23, 5, 8, 3],
-      backgroundColor: ["#28a745", "#6c757d", "#17a2b8", "#007bff"],
-      borderColor: ["#fff", "#fff", "#fff", "#fff"],
-      borderWidth: 2,
-    },
-  ],
-};
 
 const clientsData = {
   labels: ["Regular Care", "Intensive Care", "Occasional Care", "New Clients"],
@@ -127,6 +108,160 @@ const chartOptions = {
 };
 
 const MyDashboard = () => {
+  const [error, setError] = useState(null);
+  const [visits, setVisits] = useState([]);
+  const [visitloading, setVisitLoading] = useState(true);
+
+  // Initializing visitsData, we will update it after fetching the data
+  const [visitsData, setVisitsData] = useState({
+    labels: ["Scheduled", "Ongoing", "Completed", "Confirmed"],
+    datasets: [
+      {
+        data: [0, 0, 0, 0], // Initializing counts with 0
+        backgroundColor: ["#ffc107", "#17a2b8", "#28a745", "#007bff"],
+        borderColor: ["#fff", "#fff", "#fff", "#fff"],
+        borderWidth: 2,
+      },
+    ],
+  });
+
+  // Fetch visits and update chart data
+  useEffect(() => {
+    const fetchVisits = async () => {
+      console.log("Fetching visits");
+
+      try {
+        const response = await VisitsService.getAllVisits();
+        console.log(response.data);
+
+        setVisits(response.data || []);
+        updateVisitsData(response.data || []);
+      } catch (err) {
+        setError(err.message || "Error fetching visits");
+      } finally {
+        setVisitLoading(false);
+      }
+    };
+
+    // Filter the visits by their status and update the chart data
+    const updateVisitsData = (visitsArray) => {
+      const statusCounts = {
+        Scheduled: 0,
+        Ongoing: 0,
+        Completed: 0,
+        Confirmed: 0,
+      };
+
+      // Count visits based on their status
+      visitsArray.forEach((visit) => {
+        if (statusCounts[visit.status] !== undefined) {
+          statusCounts[visit.status]++;
+        }
+      });
+
+      // Update visitsData for the chart
+      setVisitsData({
+        labels: ["Scheduled", "Ongoing", "Completed", "Confirmed"],
+        datasets: [
+          {
+            data: [
+              statusCounts.Scheduled,
+              statusCounts.Ongoing,
+              statusCounts.Completed,
+              statusCounts.Confirmed,
+            ],
+            backgroundColor: ["#ffc107", "#17a2b8", "#28a745", "#007bff"],
+            borderColor: ["#fff", "#fff", "#fff", "#fff"],
+            borderWidth: 2,
+          },
+        ],
+      });
+    };
+
+    fetchVisits();
+  }, []); // Empty dependency array to fetch visits once on mount
+
+  const [carers, setCarers] = useState([]); // State to hold carers data
+  const [carerloading, setCarerLoading] = useState(true);
+
+  const [carersData, setCarersData] = useState({
+    labels: ["FullTime", "PartTime", "Contract"],
+    datasets: [
+      {
+        data: [0, 0, 0], // Initializing counts with 0 for Fulltime and PartTime
+        backgroundColor: ["#28a745", "#6c757d"],
+        borderColor: ["#fff", "#fff"],
+        borderWidth: 2,
+      },
+    ],
+  });
+
+  // Fetch carers and update chart data
+  useEffect(() => {
+    const fetchCarers = async () => {
+      console.log("Fetching carers");
+
+      try {
+        const response = await CarerService.getAllCarers(); // Adjust the API call to fetch carers
+        console.log(response.data);
+
+        setCarers(response.data || []); // Store the fetched carers in state
+        updateCarersData(response.data || []); // Update carers data for the chart
+      } catch (err) {
+        setError(err.message || "Error fetching carers");
+      } finally {
+        setCarerLoading(false);
+      }
+    };
+
+    // Filter the carers by their type (Fulltime and PartTime) and update the chart data
+    const updateCarersData = (carersArray) => {
+      const statusCounts = {
+        FullTime: 0,
+        PartTime: 0,
+        Contract: 0,
+      };
+
+      // Count carers based on their work type
+      carersArray.forEach((carer) => {
+        if (statusCounts[carer.employmentType] !== undefined) {
+          statusCounts[carer.employmentType]++;
+        }
+      });
+
+      // Update carersData for the chart
+      setCarersData({
+        labels: ["Fulltime", "PartTime"],
+        datasets: [
+          {
+            data: [
+              statusCounts.FullTime,
+              statusCounts.PartTime,
+              statusCounts.Contract,
+            ],
+            backgroundColor: ["#28a745", "#6c757d"],
+            borderColor: ["#fff", "#fff"],
+            borderWidth: 2,
+          },
+        ],
+      });
+    };
+
+    fetchCarers(); // Fetch carers data on component mount
+  }, []); // Empty dependency array to run the effect only once when component mounts
+
+  // const carexrsData = {
+  //   labels: ["Active", "On Leave", "In Training", "New Hires"],
+  //   datasets: [
+  //     {
+  //       data: [23, 5, 8, 3],
+  //       backgroundColor: ["#28a745", "#6c757d", "#17a2b8", "#007bff"],
+  //       borderColor: ["#fff", "#fff", "#fff", "#fff"],
+  //       borderWidth: 2,
+  //     },
+  //   ],
+  // };
+
   return (
     <>
       <Container className="mt--7" fluid>
@@ -140,7 +275,10 @@ const MyDashboard = () => {
                     <h5 className="text-uppercase text-muted mb-0">
                       Total Visits
                     </h5>
-                    <span className="h2 font-weight-bold mb-0">350</span>
+                    <span className="h2 font-weight-bold mb-0">
+                      {" "}
+                      {visits.length}{" "}
+                    </span>
                   </div>
                   <Col className="col-auto">
                     <div className="icon icon-shape bg-info text-white rounded-circle shadow">
@@ -165,7 +303,9 @@ const MyDashboard = () => {
                     <h5 className="text-uppercase text-muted mb-0">
                       Active Carers
                     </h5>
-                    <span className="h2 font-weight-bold mb-0">23</span>
+                    <span className="h2 font-weight-bold mb-0">
+                      {carers.length}
+                    </span>
                   </div>
                   <Col className="col-auto">
                     <div className="icon icon-shape bg-primary text-white rounded-circle shadow">
@@ -267,10 +407,15 @@ const MyDashboard = () => {
                     <tr>
                       <th scope="row">
                         <Badge color="warning" pill>
-                          Pending
+                          Scheduled
                         </Badge>
                       </th>
-                      <td>25</td>
+                      <td>
+                        {
+                          visits.filter((visit) => visit.status === "Scheduled")
+                            .length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -283,7 +428,32 @@ const MyDashboard = () => {
                           Ongoing
                         </Badge>
                       </th>
-                      <td>15</td>
+
+                      <td>
+                        {
+                          visits.filter((visit) => visit.status === "Ongoing")
+                            .length
+                        }
+                      </td>
+                      <td>
+                        <Button color="link" size="sm">
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                        <Badge color="primary" pill>
+                          Confirmed
+                        </Badge>
+                      </th>
+
+                      <td>
+                        {
+                          visits.filter((visit) => visit.status === "Confirmed")
+                            .length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -296,7 +466,12 @@ const MyDashboard = () => {
                           Completed
                         </Badge>
                       </th>
-                      <td>60</td>
+                      <td>
+                        {
+                          visits.filter((visit) => visit.status === "Completed")
+                            .length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -341,8 +516,14 @@ const MyDashboard = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <th scope="row">Active</th>
-                      <td>23</td>
+                      <th scope="row">Full-Time</th>
+                      <td>
+                        {
+                          carers.filter(
+                            (carer) => carer.employmentType === "FullTime"
+                          ).length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -350,8 +531,14 @@ const MyDashboard = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th scope="row">On Leave</th>
-                      <td>5</td>
+                      <th scope="row">Part-Time</th>
+                      <td>
+                        {
+                          carers.filter(
+                            (carer) => carer.employmentType === "PartTime"
+                          ).length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -359,6 +546,21 @@ const MyDashboard = () => {
                       </td>
                     </tr>
                     <tr>
+                      <th scope="row">Contract</th>
+                      <td>
+                        {
+                          carers.filter(
+                            (carer) => carer.employmentType === "Contract"
+                          ).length
+                        }
+                      </td>
+                      <td>
+                        <Button color="link" size="sm">
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                    {/* <tr>
                       <th scope="row">In Training</th>
                       <td>8</td>
                       <td>
@@ -366,8 +568,8 @@ const MyDashboard = () => {
                           View
                         </Button>
                       </td>
-                    </tr>
-                    <tr>
+                    </tr> */}
+                    {/* <tr>
                       <th scope="row">New Hires</th>
                       <td>3</td>
                       <td>
@@ -375,7 +577,7 @@ const MyDashboard = () => {
                           View
                         </Button>
                       </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </Table>
               </CardBody>
