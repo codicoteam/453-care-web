@@ -44,6 +44,7 @@ import Chart from "chart.js"; // ✅ Import Chart.js v2 correctly
 import { Pie as PieChart, Bar as BarChart, Doughnut } from "react-chartjs-2";
 import CarerService from "services/carer_services/carer_service";
 import VisitsService from "services/visits_service/visits_service.js";
+import ClientService from "services/client_services/client_services";
 import { useEffect, useState } from "react";
 import { PieChartRounded } from "@mui/icons-material";
 
@@ -62,17 +63,17 @@ const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 // Sample data - replace with actual backend fetched data
 
-const clientsData = {
-  labels: ["Regular Care", "Intensive Care", "Occasional Care", "New Clients"],
-  datasets: [
-    {
-      data: [45, 23, 18, 7],
-      backgroundColor: ["#007bff", "#dc3545", "#6c757d", "#28a745"],
-      borderColor: ["#fff", "#fff", "#fff", "#fff"],
-      borderWidth: 2,
-    },
-  ],
-};
+// const clientsData = {
+//   labels: ["Regular Care", "Intensive Care", "Occasional Care", "New Clients"],
+//   datasets: [
+//     {
+//       data: [45, 23, 18, 7],
+//       backgroundColor: ["#007bff", "#dc3545", "#6c757d", "#28a745"],
+//       borderColor: ["#fff", "#fff", "#fff", "#fff"],
+//       borderWidth: 2,
+//     },
+//   ],
+// };
 
 const financeData = {
   labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -262,6 +263,68 @@ const MyDashboard = () => {
   //   ],
   // };
 
+  //Clients Data
+  const [clientError, setClientError] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [clientLoading, setClientLoading] = useState(true);
+
+  // Initializing clientsData, will be updated after fetching data
+  const [clientsData, setClientsData] = useState({
+    labels: ["Male", "Female"],
+    datasets: [
+      {
+        data: [0, 0], // Initializing counts with 0
+        backgroundColor: ["#007bff", "#dc3545"],
+        borderColor: ["#fff", "#fff"],
+        borderWidth: 2,
+      },
+    ],
+  });
+
+  // Fetch clients and update chart data
+  useEffect(() => {
+    const fetchClients = async () => {
+      console.log("Fetching clients");
+
+      try {
+        const response = await ClientService.getAllClient();
+        console.log(response.data);
+
+        setClients(response.data || []);
+        updateClientsData(response.data || []);
+      } catch (err) {
+        setClientError(err.message || "Error fetching clients");
+      } finally {
+        setClientLoading(false);
+      }
+    };
+
+    // Count clients based on gender and update chart
+    const updateClientsData = (clientsArray) => {
+      const genderCounts = { Male: 0, Female: 0 };
+
+      clientsArray.forEach((client) => {
+        if (genderCounts[client.gender] !== undefined) {
+          genderCounts[client.gender]++;
+        }
+      });
+
+      setClientsData({
+        labels: ["Male", "Female"],
+        datasets: [
+          {
+            data: [genderCounts.Male, genderCounts.Female],
+            backgroundColor: ["#007bff", "#dc3545"],
+            borderColor: ["#fff", "#fff"],
+            borderWidth: 2,
+          },
+        ],
+      });
+    };
+
+    fetchClients();
+  }, []); // Fetch clients once on component mount
+
   return (
     <>
       <Container className="mt--7" fluid>
@@ -286,12 +349,12 @@ const MyDashboard = () => {
                     </div>
                   </Col>
                 </Row>
-                <p className="mt-3 mb-0 text-muted text-sm">
+                {/* <p className="mt-3 mb-0 text-muted text-sm">
                   <span className="text-success mr-2">
                     <i className="fa fa-arrow-up"></i> 12%
                   </span>
                   <span className="text-nowrap">Since last month</span>
-                </p>
+                </p> */}
               </CardBody>
             </Card>
           </Col>
@@ -313,12 +376,12 @@ const MyDashboard = () => {
                     </div>
                   </Col>
                 </Row>
-                <p className="mt-3 mb-0 text-muted text-sm">
+                {/* <p className="mt-3 mb-0 text-muted text-sm">
                   <span className="text-success mr-2">
                     <i className="fa fa-arrow-up"></i> 3%
                   </span>
                   <span className="text-nowrap">Since last month</span>
-                </p>
+                </p> */}
               </CardBody>
             </Card>
           </Col>
@@ -330,7 +393,9 @@ const MyDashboard = () => {
                     <h5 className="text-uppercase text-muted mb-0">
                       Total Clients
                     </h5>
-                    <span className="h2 font-weight-bold mb-0">93</span>
+                    <span className="h2 font-weight-bold mb-0">
+                      {clients.length}
+                    </span>
                   </div>
                   <Col className="col-auto">
                     <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -338,12 +403,12 @@ const MyDashboard = () => {
                     </div>
                   </Col>
                 </Row>
-                <p className="mt-3 mb-0 text-muted text-sm">
+                {/* <p className="mt-3 mb-0 text-muted text-sm">
                   <span className="text-success mr-2">
                     <i className="fa fa-arrow-up"></i> 8%
                   </span>
                   <span className="text-nowrap">Since last month</span>
-                </p>
+                </p> */}
               </CardBody>
             </Card>
           </Col>
@@ -616,8 +681,14 @@ const MyDashboard = () => {
                   </thead>
                   <tbody>
                     <tr>
-                      <th scope="row">Regular Care</th>
-                      <td>45</td>
+                      <th scope="row">Male</th>
+
+                      <td>
+                        {
+                          clients.filter((client) => client.gender === "Male")
+                            .length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
@@ -625,15 +696,21 @@ const MyDashboard = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th scope="row">Intensive Care</th>
-                      <td>23</td>
+                      <th scope="row">Female</th>
+                      <td>
+                        {
+                          clients.filter((client) => client.gender === "Female")
+                            .length
+                        }
+                      </td>
                       <td>
                         <Button color="link" size="sm">
                           View
                         </Button>
                       </td>
                     </tr>
-                    <tr>
+
+                    {/* <tr>
                       <th scope="row">Occasional Care</th>
                       <td>18</td>
                       <td>
@@ -650,7 +727,7 @@ const MyDashboard = () => {
                           View
                         </Button>
                       </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </Table>
               </CardBody>
