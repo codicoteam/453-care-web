@@ -53,9 +53,16 @@ const AdminNavbar = () => {
               onClick={(e) => e.preventDefault()}
             >
               <img
-                alt="..."
-                className="rounded-circle"
-                src={require("../../assets/img/brand/logo.jpg")}
+                alt="Logo"
+                src={require("../../assets/img/brand/log.jpg")}
+                style={{
+                  width: "60px", // Increase size for zoom effect
+                  height: "60px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  objectPosition: "center", // Center the image
+                  display: "block",
+                }}
               />
             </a>
 
@@ -200,7 +207,7 @@ const AdminNavbar = () => {
                     className="nav-link-inner--text text-blue-500 text-2xl font-semibold"
                     style={{ color: "blue" }}
                   >
-                    Route
+                    Runner
                   </span>
                 </NavLink>
               </NavItem>

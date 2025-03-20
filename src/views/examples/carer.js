@@ -356,13 +356,13 @@ const MyCarer = () => {
 
   const handleSubmit = async () => {
     try {
-      const values = await form.validateFields();
+      const values = await form.validateFields(); // Ensure form values are valid
       console.log("adding carer");
 
       const carerData = {
         firstName: values.firstname,
         lastName: values.lastname,
-        profilePicture: " ", // Example static valueimageUrl
+        profilePicture: " Pic", // Example static value
         email: values.email,
         contactNumber: values.contactnumber,
         address: values.address,
@@ -383,12 +383,17 @@ const MyCarer = () => {
       setAddLoading(true);
       await AddCarerService.addNewCarer(carerData);
       showMessage("success", "Adding carer successfully!");
-      console.log(await AddCarerService.addNewCarer(carerData));
 
       form.resetFields();
       onClose();
     } catch (error) {
-      showMessage("error", error || "Something went wrong!");
+      console.error("Validation or API error:", error);
+
+      if (error.errorFields) {
+        showMessage("error", "Please correct the highlighted fields.");
+      } else {
+        showMessage("error", error.message || "Something went wrong!");
+      }
     } finally {
       setAddLoading(false);
     }
@@ -594,8 +599,8 @@ const MyCarer = () => {
                     label="Working Hours"
                     rules={[
                       {
-                        required: true,
-                        message: "Please select working hours",
+                        required: false,
+                        // message: "Please select working hours",
                       },
                     ]}
                   >
@@ -649,13 +654,14 @@ const MyCarer = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please select employee type",
+                        message: "Please elect employee type",
                       },
                     ]}
                   >
                     <Select placeholder="Please select employee type">
-                      <Select.Option value="fullTime">Full-Time</Select.Option>
-                      <Select.Option value="partTime">Part-Time</Select.Option>
+                      <Select.Option value="Full-time">Full-Time</Select.Option>
+                      <Select.Option value="Part-time">Part-Time</Select.Option>
+                      <Select.Option value="Contract">Contract</Select.Option>
                     </Select>
                   </Form.Item>
                 </Col>

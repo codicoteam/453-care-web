@@ -232,7 +232,7 @@ const MyDashboard = () => {
 
       // Update carersData for the chart
       setCarersData({
-        labels: ["Fulltime", "PartTime"],
+        labels: ["Fulltime", "PartTime", "Contract"],
         datasets: [
           {
             data: [
@@ -240,8 +240,8 @@ const MyDashboard = () => {
               statusCounts.PartTime,
               statusCounts.Contract,
             ],
-            backgroundColor: ["#28a745", "#6c757d"],
-            borderColor: ["#fff", "#fff"],
+            backgroundColor: ["#4C7BF3", "#4CAF50", "#FF9800"],
+            borderColor: ["#fff", "#fff", "#fff"],
             borderWidth: 2,
           },
         ],
@@ -274,7 +274,7 @@ const MyDashboard = () => {
     datasets: [
       {
         data: [0, 0], // Initializing counts with 0
-        backgroundColor: ["#007bff", "#dc3545"],
+        backgroundColor: ["#007bff", "#FFB6C1"],
         borderColor: ["#fff", "#fff"],
         borderWidth: 2,
       },

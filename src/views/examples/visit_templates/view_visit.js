@@ -34,7 +34,6 @@ const VisitDetailsModal = ({
       onCancel={() => setOpenVisitDetails(false)}
       width={1100}
       height={800}
-
       maskStyle={{
         backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust overlay
       }}
@@ -115,7 +114,31 @@ const VisitDetailsModal = ({
                     </div>
                   </Row>
 
+                  <Row className="mr-8">
+                    <div>
+                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
+                        Amount Paid Per Hour:
+                      </h3>
+                    </div>
+                    <div>
+                      <h3 className="mb-0" style={{ color: "grey" }}>
+                        {visit.amount_paid_per_hou}
+                      </h3>
+                    </div>
+                  </Row>
 
+                  <Row className="mr-8">
+                    <div>
+                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
+                        Description:
+                      </h3>
+                    </div>
+                    <div>
+                      <h3 className="mb-0" style={{ color: "grey" }}>
+                        {visit.description}
+                      </h3>
+                    </div>
+                  </Row>
 
                   <Divider />
 
@@ -257,10 +280,10 @@ const VisitDetailsModal = ({
               children: <ObservationsTab visitId={visit._id} />,
             },
             {
-                key: "5",
-                label: "Medications",
-                children: <MedicationTab visitId={visit._id} />,
-              },
+              key: "5",
+              label: "Medications",
+              children: <MedicationTab visitId={visit._id} />,
+            },
           ]}
           onChange={onChange}
         />

@@ -168,6 +168,7 @@ const MyVisits = () => {
         clientId: "675eaa3279915a77996c8884",
         careProfessionalId: "6763fbc6d9c0556eaea94214",
         DateOfVisit: "2024-12-15",
+        amount_paid_per_hour: values.amount_paid_per_hour,
         startTime: values.startTime,
         endTime: values.endTime,
         status: values.status,
@@ -178,6 +179,7 @@ const MyVisits = () => {
         },
         officialVisitTime: values.officialVisitTime,
         officialEndTime: values.officialEndTime,
+        description: values.description,
       };
       console.log(visitData);
 
@@ -191,7 +193,8 @@ const MyVisits = () => {
       form.resetFields();
       onClose();
     } catch (error) {
-      showMessage("Something went wrong!");
+      console.error("Error adding visit:", error);
+      showMessage("error", "Something went wrong!");
     } finally {
       setAddLoading(false);
     }
@@ -277,6 +280,28 @@ const MyVisits = () => {
                   </Form.Item>
                 </Col>
               </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="amount_paid_per_hour"
+                    label="Amount Paid Per Hour"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter the amount paid per hour",
+                      },
+                    ]}
+                  >
+                    <Input
+                      type="number"
+                      placeholder="Enter amount per hour"
+                      min={0}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
@@ -366,6 +391,25 @@ const MyVisits = () => {
                       placeholder="Select end time"
                       style={{ width: "100%" }}
                       format="HH:mm"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="description"
+                    label="Description"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter description",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      rows={4} // You can adjust the number of rows as needed
+                      placeholder="Please enter description"
                     />
                   </Form.Item>
                 </Col>
@@ -474,6 +518,7 @@ const MyVisits = () => {
                     <th scope="col">Location</th>
                     <th scope="col">Date of Visit</th>
                     <th scope="col">Visit Status</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Start Time</th>
                     <th scope="col">End Time</th>
 
@@ -483,6 +528,9 @@ const MyVisits = () => {
                 <tbody className="bg-violet">
                   {visitloading ? (
                     <tr>
+                      <td>
+                        <CustomSkeleton height="200px" width="100%" />
+                      </td>
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
@@ -530,6 +578,9 @@ const MyVisits = () => {
                           >
                             {visit.status}
                           </div>
+                        </th>
+                        <th scope="row">
+                          <div>{visit.description}</div>
                         </th>
                         <th scope="row">
                           <div>{visit.startTime}</div>
