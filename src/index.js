@@ -38,7 +38,7 @@ root.render(
       <Route path="/dashboard" element={<Index />} />
       <Route path="/auth/*" element={<AuthLayout />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register/>} />
+      <Route path="/register" element={<Register />} />
 
       <Route path="*" element={<Navigate to="/admin/index" replace />} />
     </Routes>

@@ -362,7 +362,7 @@ const MyCarer = () => {
       const carerData = {
         firstName: values.firstname,
         lastName: values.lastname,
-        profilePicture: " Pic", // Example static value
+        profilePicture: imageUrl, // Example static value
         email: values.email,
         contactNumber: values.contactnumber,
         address: values.address,
@@ -389,11 +389,11 @@ const MyCarer = () => {
     } catch (error) {
       console.error("Validation or API error:", error);
 
-      if (error.errorFields) {
-        showMessage("error", "Please correct the highlighted fields.");
-      } else {
-        showMessage("error", error.message || "Something went wrong!");
-      }
+      // if (error.errorFields) {
+      //   showMessage("error", "Please correct the highlighted fields.");
+      // } else {
+      //   showMessage("error", error.message || "Something went wrong!");
+      // }
     } finally {
       setAddLoading(false);
     }
