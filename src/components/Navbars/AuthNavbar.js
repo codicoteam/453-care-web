@@ -215,6 +215,25 @@ const AdminNavbar = () => {
               <NavItem>
                 <NavLink
                   className="nav-link-icon"
+                  to="/auth/myPharmacies"
+                  tag={Link}
+                >
+                  <i
+                    className="fas fa-chart-line text-2xl"
+                    style={{ color: "blue" }}
+                  />
+                  <span
+                    className="nav-link-inner--text text-2xl"
+                    style={{ color: "blue" }}
+                  >
+                    Pharmacies
+                  </span>
+                </NavLink>
+              </NavItem>
+
+              <NavItem>
+                <NavLink
+                  className="nav-link-icon"
                   to="/auth/carerequired"
                   tag={Link}
                 >

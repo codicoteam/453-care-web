@@ -33,6 +33,7 @@ import CareRequired from "views/examples/care_required";
 import MyCarer from "views/examples/carer";
 import AddMyCarer from "views/examples/add_carer";
 import MyClient from "views/examples/client";
+import Pharmacies from "views/examples/pharmacies";
 import MyVisits from "views/examples/myvisits";
 import MyTasks from "views/examples/task";
 import MyMedications from "views/examples/medications";
@@ -55,8 +56,7 @@ var routes = [
     component: <Icons />,
     layout: "/admin",
   },
- 
-  
+
   {
     path: "/clients",
     name: "Clients",
@@ -127,7 +127,7 @@ var routes = [
     component: <Login />,
     layout: "/login",
   },
- 
+
   {
     path: "/register",
     name: "Register",
@@ -194,7 +194,6 @@ var routes = [
     component: <MyVital />,
     layout: "/auth",
   },
-  
 
   {
     path: "/mytasks",
@@ -211,7 +210,6 @@ var routes = [
     layout: "/auth",
   },
 
-
   {
     path: "/myclient",
     name: "Client",
@@ -220,9 +218,13 @@ var routes = [
     layout: "/auth",
   },
 
-
-
-
+  {
+    path: "/myPharmacies",
+    name: "Pharmacy",
+    icon: "ni ni-circle-08 text-pink",
+    component: <Pharmacies />,
+    layout: "/auth",
+  },
 
   {
     path: "/addmycarer",
