@@ -41,9 +41,12 @@ const Login = () => {
       const response = await loginUser(formData);
       console.log("Response:", response);
       showMessage("success", "Login successfully!");
-      navigate("/auth/mycarer");
+      navigate("/auth/mydashboard");
     } catch (err) {
-      showMessage("error", err.response?.data?.message || "Something went wrong!");
+      showMessage(
+        "error",
+        err.response?.data?.message || "Something went wrong!"
+      );
     } finally {
       setLoading(false);
     }
@@ -61,11 +64,10 @@ const Login = () => {
         overflow: "hidden",
       }}
     >
-
-{/* ../../assets/img/brand/logoHtc.jpeg */}
+      {/* ../../assets/img/brand/logoHtc.jpeg */}
       {/* Background image with transparency */}
       <img
-         src={logoHtc}
+        src={logoHtc}
         alt="Background"
         style={{
           position: "absolute",

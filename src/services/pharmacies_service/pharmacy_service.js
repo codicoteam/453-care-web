@@ -6,11 +6,12 @@ const BASE_URL =
 const PharmacyService = {
   getAllPharmacies: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/getall`, {
+      const response = await axios.get(`${BASE_URL}/get_all_pharmacies`, {
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
         },
       });
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error.response?.data || "Failed to retrieve pharmacies";
@@ -32,12 +33,16 @@ const PharmacyService = {
 
   postPharmacy: async (pharmacyData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/create`, pharmacyData, {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${BASE_URL}/create_pharmacy`,
+        pharmacyData,
+        {
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       throw error.response?.data || "Failed to create pharmacy";

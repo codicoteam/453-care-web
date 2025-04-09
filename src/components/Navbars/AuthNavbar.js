@@ -219,14 +219,14 @@ const AdminNavbar = () => {
                   tag={Link}
                 >
                   <i
-                    className="fas fa-chart-line text-2xl"
+                    className="fas fa-clinic-medical"
                     style={{ color: "blue" }}
                   />
                   <span
                     className="nav-link-inner--text text-2xl"
                     style={{ color: "blue" }}
                   >
-                    Pharmacies
+                    Pharmacy
                   </span>
                 </NavLink>
               </NavItem>

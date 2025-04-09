@@ -49,9 +49,42 @@ import {
 import { showMessage } from "helper/feedback_message_helper";
 import CustomSpin from "components/customised_spins/customised_sprin";
 import EditVisit from "./visit_templates/edit_visit";
-import VisitDetailsModal from "./visit_templates/view_visit";
+import PharmacyDetailsModal from "./pharmacy_template/view_pharmacy";
 import { TimePicker } from "antd";
 import { Checkbox } from "antd";
+import { supabase } from "helper/supabase/supabaseClient";
+
+// Ant Design Components
+import { Upload, Avatar, Typography, Tag, Empty } from "antd";
+
+// Ant Design Icons
+import {
+  PlusOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  GlobalOutlined,
+  UserOutlined,
+  ClockCircleOutlined,
+  SearchOutlined,
+  EnvironmentOutlined,
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  SaveOutlined,
+  ShopOutlined,
+  AimOutlined,
+  PictureOutlined,
+  SafetyCertificateOutlined,
+  MedicineBoxOutlined,
+  FieldTimeOutlined,
+  UserSwitchOutlined,
+  CalendarOutlined,
+  TeamOutlined,
+  UsergroupAddOutlined,
+  ArrowRightOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -85,6 +118,39 @@ const MyPharmacy = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
   const [deleteloading, setDeleteLoading] = useState(false);
+
+  const [imageUrl, setImageUrl] = useState(null);
+  const handleFileUpload = async (event) => {
+    console.log("handlefileupload");
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Invalid file type. Please upload an image.");
+      return;
+    }
+
+    const fileName = `${Date.now()}_${file.name}`;
+
+    // Upload image to the Supabase bucket
+    const { data, error } = await supabase.storage
+      .from("care_app")
+      .upload(fileName, file);
+
+    if (error) {
+      console.error("Error uploading file:", error.message);
+      return;
+    }
+
+    // Get the public URL of the uploaded image
+    const { data: publicData } = supabase.storage
+      .from("care_app")
+      .getPublicUrl(fileName);
+    if (publicData) {
+      console.log(publicData.publicUrl);
+      setImageUrl(publicData.publicUrl);
+    }
+  };
 
   const handleOpenDrawer = (pharmacy) => {
     setSelectedPharmacy(pharmacy);
@@ -131,7 +197,8 @@ const MyPharmacy = () => {
 
       try {
         const response = await PharmacyService.getAllPharmacies();
-        setPharmacy(response.data || []);
+        console.log(response);
+        setPharmacy(response || []);
       } catch (err) {
         setError(err.message || "Error fetching pharmacies");
       } finally {
@@ -180,7 +247,7 @@ const MyPharmacy = () => {
           email: values.email,
           website: values.website,
         },
-        logoImage: values.logoImage,
+        logoImage: values.imageUrl,
         openingHours: {
           monday: values.openingHours.monday,
           tuesday: values.openingHours.tuesday,
@@ -233,7 +300,12 @@ const MyPharmacy = () => {
           extra={
             <Space>
               <Button onClick={onClose}>Cancel</Button>
-              <Button onClick={handleSubmit} type="primary" color="success">
+              <Button
+                onClick={handleSubmit}
+                type="primary"
+                color="success"
+                icon={<SaveOutlined />}
+              >
                 Submit
               </Button>
             </Space>
@@ -251,7 +323,10 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter pharmacy name" },
                     ]}
                   >
-                    <Input placeholder="Enter pharmacy name" />
+                    <Input
+                      prefix={<ShopOutlined />}
+                      placeholder="Enter pharmacy name"
+                    />
                   </Form.Item>
                 </Col>
 
@@ -263,7 +338,10 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter address" },
                     ]}
                   >
-                    <Input placeholder="Enter address" />
+                    <Input
+                      prefix={<EnvironmentOutlined />}
+                      placeholder="Enter address"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -277,7 +355,11 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter latitude" },
                     ]}
                   >
-                    <Input type="number" placeholder="Enter latitude" />
+                    <Input
+                      prefix={<AimOutlined />}
+                      type="number"
+                      placeholder="Enter latitude"
+                    />
                   </Form.Item>
                 </Col>
 
@@ -289,7 +371,11 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter longitude" },
                     ]}
                   >
-                    <Input type="number" placeholder="Enter longitude" />
+                    <Input
+                      prefix={<AimOutlined />}
+                      type="number"
+                      placeholder="Enter longitude"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -303,7 +389,10 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter phone number" },
                     ]}
                   >
-                    <Input placeholder="Enter phone number" />
+                    <Input
+                      prefix={<PhoneOutlined />}
+                      placeholder="Enter phone number"
+                    />
                   </Form.Item>
                 </Col>
 
@@ -313,7 +402,11 @@ const MyPharmacy = () => {
                     label="Email"
                     rules={[{ required: true, message: "Please enter email" }]}
                   >
-                    <Input type="email" placeholder="Enter email" />
+                    <Input
+                      prefix={<MailOutlined />}
+                      type="email"
+                      placeholder="Enter email"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -321,14 +414,44 @@ const MyPharmacy = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="website" label="Website">
-                    <Input placeholder="Enter website URL" />
+                    <Input
+                      prefix={<GlobalOutlined />}
+                      placeholder="Enter website URL"
+                    />
                   </Form.Item>
                 </Col>
+              </Row>
 
-                <Col span={12}>
-                  <Form.Item name="logoImage" label="Logo Image URL">
-                    <Input placeholder="Enter logo image URL" />
-                  </Form.Item>
+              <Row gutter={16}>
+                <Col
+                  span={12}
+                  style={{
+                    border: "2px dashed lightgreen", // Broken light green border
+                    padding: "16px", // Padding inside the column
+                  }}
+                >
+                  <div>
+                    <input
+                      style={{
+                        padding: "16px", // Padding inside the column
+                      }}
+                      type="file"
+                      onChange={handleFileUpload}
+                    />
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="Uploaded"
+                        style={{
+                          width: "200px",
+                          marginTop: "10px",
+                          padding: "16px",
+                        }}
+                      />
+                    ) : (
+                      <Avatar size={64} icon={<UserOutlined />} />
+                    )}
+                  </div>
                 </Col>
               </Row>
 
@@ -344,7 +467,10 @@ const MyPharmacy = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Enter license number" />
+                    <Input
+                      prefix={<SafetyCertificateOutlined />}
+                      placeholder="Enter license number"
+                    />
                   </Form.Item>
                 </Col>
 
@@ -356,7 +482,10 @@ const MyPharmacy = () => {
                       { required: true, message: "Please enter owner's name" },
                     ]}
                   >
-                    <Input placeholder="Enter owner's name" />
+                    <Input
+                      prefix={<UserOutlined />}
+                      placeholder="Enter owner's name"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -374,6 +503,7 @@ const MyPharmacy = () => {
                       mode="tags"
                       placeholder="Enter or select services"
                       style={{ width: "100%" }}
+                      prefix={<MedicineBoxOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -391,7 +521,7 @@ const MyPharmacy = () => {
                     ]}
                   >
                     <Input.TextArea
-                      rows={4} // You can adjust the number of rows as needed
+                      rows={4}
                       placeholder="Please enter description"
                     />
                   </Form.Item>
@@ -400,7 +530,9 @@ const MyPharmacy = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="is24Hours" valuePropName="checked">
-                    <Checkbox>Open 24 Hours</Checkbox>
+                    <Checkbox>
+                      <ClockCircleOutlined /> Open 24 Hours
+                    </Checkbox>
                   </Form.Item>
                 </Col>
               </Row>
@@ -422,7 +554,10 @@ const MyPharmacy = () => {
                         day.charAt(0).toUpperCase() + day.slice(1)
                       } Hours`}
                     >
-                      <Input placeholder={`e.g. 08:00 - 18:00 or Closed`} />
+                      <Input
+                        prefix={<FieldTimeOutlined />}
+                        placeholder={`e.g. 08:00 - 18:00 or Closed`}
+                      />
                     </Form.Item>
                   </Col>
                 ))}
@@ -473,17 +608,20 @@ const MyPharmacy = () => {
                   <div className="col">
                     <h3 className="mb-0"> Pharmacies</h3>
                   </div>
-                  <Button color="success" onClick={showDrawer} variant="dashed">
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={showDrawer}
+                    className="gradient-button"
+                    style={{
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                      border: "none",
+                      borderRadius: "8px",
+                    }}
+                  >
                     Add Pharmacy
                   </Button>
                 </Row>
-                {/* <Row className="align-items-center">
-                  <div className="col mt-4">
-                    <h3 className="mb-0" style={{ color: "red" }}>
-                      8 Required
-                    </h3>
-                  </div>
-                </Row> */}
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
@@ -496,18 +634,30 @@ const MyPharmacy = () => {
                 <tbody>
                   <tr>
                     <th scope="row">Cleaning the Patient</th>
-                    <td>2 Carers</td>
-                    <td>Peter</td>
+                    <td>
+                      <UserSwitchOutlined /> 2 Carers
+                    </td>
+                    <td>
+                      <UserOutlined /> Peter
+                    </td>
                   </tr>
                   <tr>
                     <th scope="row">Give Medication</th>
-                    <td>1 Carer</td>
-                    <td>Trymore</td>
+                    <td>
+                      <UserSwitchOutlined /> 1 Carer
+                    </td>
+                    <td>
+                      <UserOutlined /> Trymore
+                    </td>
                   </tr>
                   <tr>
                     <th scope="row">Food Preparation</th>
-                    <td>2 Carer</td>
-                    <td>Gift</td>
+                    <td>
+                      <UserSwitchOutlined /> 2 Carer
+                    </td>
+                    <td>
+                      <UserOutlined /> Gift
+                    </td>
                   </tr>
                 </tbody>
               </Table>
@@ -522,13 +672,25 @@ const MyPharmacy = () => {
               </CardHeader>
 
               <div className="pl-3 mb-3">
-                <h4 className="mb-1">Required Hours: 1435h.35m</h4>
-                <h4 className="mb-1">Booked Hours: 543h.32m</h4>
-                <h4 className="mb-1">Carers working this week: 7</h4>
-                <h4 className="mb-1">Number of active carers: 23</h4>
-                <h4 className="mb-2">Number of active carers: 23</h4>
-                <h4 className="mb-1" style={{ color: "blue" }}>
-                  View All
+                <h4 className="mb-1">
+                  <ClockCircleOutlined /> Required Hours: 1435h.35m
+                </h4>
+                <h4 className="mb-1">
+                  <CalendarOutlined /> Booked Hours: 543h.32m
+                </h4>
+                <h4 className="mb-1">
+                  <TeamOutlined /> Carers working this week: 7
+                </h4>
+                <h4 className="mb-1">
+                  <UsergroupAddOutlined /> Number of active carers: 23
+                </h4>
+                <h4 className="mb-2">
+                  <UsergroupAddOutlined /> Number of active carers: 23
+                </h4>
+                <h4 className="mb-1" style={{ color: "#1890ff" }}>
+                  <Button type="link" icon={<EyeOutlined />}>
+                    View All
+                  </Button>
                 </h4>
               </div>
             </Card>
@@ -544,14 +706,18 @@ const MyPharmacy = () => {
               </CardHeader>
               <Row className="align-items-center pl-4 pr-4">
                 <div className="col">
-                  <h4 className="mb-0" style={{ color: "blue" }}>
-                    Search pharmacy{" "}
+                  <h4 className="mb-0" style={{ color: "#1890ff" }}>
+                    <SearchOutlined /> Search pharmacy
                   </h4>
                 </div>
                 <div className="col text-right">
                   <Search
                     placeholder="10:20 - 11:30"
-                    enterButton="Go"
+                    enterButton={
+                      <Button type="primary" icon={<ArrowRightOutlined />}>
+                        Go
+                      </Button>
+                    }
                     size="large"
                     suffix={suffix}
                     onSearch={onSearch}
@@ -564,8 +730,6 @@ const MyPharmacy = () => {
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Location</th>
-                    <th scope="col">Working Hours</th>
-
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -590,82 +754,95 @@ const MyPharmacy = () => {
                     pharmacy.map((pharmacy) => (
                       <tr key={pharmacy._id} style={{ cursor: "pointer" }}>
                         <th scope="row">
-                          <div>{pharmacy.location.address}</div>
-                        </th>
-                        <th scope="row">
-                          <div>{pharmacy.DateOfVisit}</div>
-                        </th>
-                        <th scope="row">
-                          <div
-                            style={{
-                              color:
-                                pharmacy.status === "Scheduled"
-                                  ? "blue"
-                                  : pharmacy.status === "Ongoing"
-                                  ? "purple"
-                                  : pharmacy.status === "Completed"
-                                  ? "green"
-                                  : "inherit",
-                            }}
-                          >
-                            {pharmacy.status}
+                          <div className="d-flex align-items-center">
+                            <Avatar
+                              src={
+                                pharmacy.logoImage ||
+                                "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                              }
+                              icon={<ShopOutlined />}
+                              size={40}
+                              style={{ marginRight: "12px" }}
+                            />
+                            <div>
+                              <div className="font-weight-bold">
+                                {pharmacy.name}
+                              </div>
+                              <div className="text-muted small">
+                                <PhoneOutlined /> {pharmacy.phone}
+                              </div>
+                            </div>
                           </div>
                         </th>
                         <th scope="row">
-                          <div>{pharmacy.description}</div>
+                          <div>
+                            <EnvironmentOutlined /> {pharmacy.address}
+                            {pharmacy.is24Hours && (
+                              <Tag color="green" style={{ marginLeft: "8px" }}>
+                                <ClockCircleOutlined /> 24h
+                              </Tag>
+                            )}
+                          </div>
                         </th>
-                        <th scope="row">
-                          <div>{pharmacy.startTime}</div>
-                        </th>
-                        <th scope="row">
-                          <div>{pharmacy.endTime}</div>
-                        </th>
-
                         <th scope="row">
                           <div className="row">
-                            <div className="mr-2">
-                              <PrimaryButton
-                                onClick={() => handleMoreDetails(pharmacy)}
-                                title="View"
-                                color="success"
-                                variant="outlined"
-                              />
-                            </div>
-
-                            <div className="mr-2">
-                              <PrimaryButton
-                                title="Edit"
-                                color="primary"
-                                variant="outlined"
-                                onClick={() => handleOpenDrawer(pharmacy)}
-                              />
-                            </div>
-                            <div></div>
-                            <div>
-                              <PrimaryButton
-                                title="Delete"
-                                color="danger"
-                                variant="outlined"
-                                onClick={() => handleDeleteClick(pharmacy._id)}
-                              />
-                            </div>
+                            <Button
+                              onClick={() => handleMoreDetails(pharmacy)}
+                              type="primary"
+                              icon={<EyeOutlined />}
+                              style={{
+                                marginRight: "8px",
+                                background: "#52c41a",
+                                borderColor: "#52c41a",
+                                borderRadius: "8px",
+                              }}
+                            >
+                              View
+                            </Button>
+                            <Button
+                              type="primary"
+                              icon={<EditOutlined />}
+                              style={{
+                                marginRight: "8px",
+                                background: "#1890ff",
+                                borderColor: "#1890ff",
+                                borderRadius: "8px",
+                              }}
+                              onClick={() => handleOpenDrawer(pharmacy)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              type="primary"
+                              danger
+                              icon={<DeleteOutlined />}
+                              style={{
+                                borderRadius: "8px",
+                              }}
+                              onClick={() => handleDeleteClick(pharmacy._id)}
+                            >
+                              Delete
+                            </Button>
                           </div>
                         </th>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td>
-                        <CustomNoData width="70px" height="70px" />
+                      <td colSpan={3} className="text-center">
+                        <Empty
+                          image={<CustomNoData width="70px" height="70px" />}
+                          description="No pharmacy data available"
+                        />
                       </td>
                     </tr>
                   )}
                 </tbody>
               </Table>
               {selectedPharmacy && (
-                <VisitDetailsModal
-                  openvisitdetails={openpharmacydetails}
-                  setOpenVisitDetails={setOpenPharmacytDetails}
+                <PharmacyDetailsModal
+                  openpharmacydetails={openpharmacydetails}
+                  setOpenPharmacytDetails={setOpenPharmacytDetails}
                   pharmacy={selectedPharmacy}
                 />
               )}
@@ -676,16 +853,31 @@ const MyPharmacy = () => {
                 pharmacy={selectedPharmacy}
               />
               <Modal
-                title="Delete Visit"
+                title={
+                  <>
+                    <DeleteOutlined style={{ color: "red" }} /> Delete Pharmacy
+                  </>
+                }
                 visible={isDeleteModalOpen}
                 onOk={handleConfirmDelete}
                 onCancel={() => setIsDeleteModalOpen(false)}
                 okText="Delete"
-                okButtonProps={{ danger: true }}
+                okButtonProps={{
+                  danger: true,
+                  icon: <DeleteOutlined />,
+                }}
+                cancelButtonProps={{
+                  icon: <CloseOutlined />,
+                }}
               >
                 {deleteloading && <CustomSpin />}
                 {!deleteloading && (
-                  <p>Are you sure you want to delete this pharmacy?</p>
+                  <p>
+                    <ExclamationCircleOutlined
+                      style={{ color: "orange", marginRight: "8px" }}
+                    />{" "}
+                    Are you sure you want to delete this pharmacy?
+                  </p>
                 )}
               </Modal>
             </Card>

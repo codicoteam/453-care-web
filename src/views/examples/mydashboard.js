@@ -47,6 +47,7 @@ import VisitsService from "services/visits_service/visits_service.js";
 import ClientService from "services/client_services/client_services";
 import { useEffect, useState } from "react";
 import { PieChartRounded } from "@mui/icons-material";
+import MyPharmacy from "./pharmacies";
 
 // Adjust path if needed,
 
@@ -417,8 +418,12 @@ const MyDashboard = () => {
               <CardBody>
                 <Row>
                   <div className="col">
-                    <h5 className="text-uppercase text-muted mb-0">Revenue</h5>
-                    <span className="h2 font-weight-bold mb-0">$17,200</span>
+                    <h5 className="text-uppercase text-muted mb-0">
+                      Pharmacies
+                    </h5>
+                    <span className="h2 font-weight-bold mb-0">
+                      {MyPharmacy.length}
+                    </span>
                   </div>
                   <Col className="col-auto">
                     <div className="icon icon-shape bg-success text-white rounded-circle shadow">
