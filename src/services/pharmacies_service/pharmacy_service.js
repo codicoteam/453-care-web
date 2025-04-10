@@ -73,12 +73,15 @@ const PharmacyService = {
 
   deletePharmacyById: async (pharmacyId) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/delete/${pharmacyId}`, {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.delete(
+        `${BASE_URL}/delete_pharmacy/${pharmacyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error deleting pharmacy:", error);

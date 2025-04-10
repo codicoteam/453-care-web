@@ -46,6 +46,37 @@ import {
   Divider,
   message,
 } from "antd";
+import {
+  CloseOutlined,
+  CheckOutlined,
+  FileTextOutlined,
+  CaretDownOutlined,
+  CalendarOutlined,
+  CalendarCheckOutlined,
+  SyncOutlined,
+  CheckCircleOutlined,
+  DollarOutlined,
+  ClockCircleOutlined,
+  PlusOutlined,
+  WarningOutlined,
+  MedicineBoxOutlined,
+  TeamOutlined,
+  UserOutlined,
+  CoffeeOutlined,
+  ScheduleOutlined,
+  UserSwitchOutlined,
+  UnorderedListOutlined,
+  AppstoreOutlined,
+  SearchOutlined,
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  EnvironmentOutlined,
+} from "@ant-design/icons";
+
+import { Alert } from "antd";
+
 import { showMessage } from "helper/feedback_message_helper";
 import CustomSpin from "components/customised_spins/customised_sprin";
 import EditVisit from "./visit_templates/edit_visit";
@@ -202,9 +233,11 @@ const MyVisits = () => {
 
   return (
     <>
-      <Container className="mt--7 bg-white" fluid>
+      <Container className="mt--7 bg-white shadow-lg rounded-lg" fluid>
         <Drawer
-          title="Create a new visit"
+          title={
+            <span className="text-lg font-semibold">Create a new visit</span>
+          }
           width={720}
           onClose={onClose}
           open={open}
@@ -212,11 +245,22 @@ const MyVisits = () => {
             body: {
               paddingBottom: 80,
             },
+            header: {
+              borderBottom: "1px solid #f0f0f0",
+              padding: "16px 24px",
+            },
           }}
           extra={
             <Space>
-              <Button onClick={onClose}>Cancel</Button>
-              <Button onClick={handleSubmit} type="primary" color="success">
+              <Button onClick={onClose} icon={<CloseOutlined />}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                type="primary"
+                icon={<CheckOutlined />}
+                className="bg-emerald-600 hover:bg-emerald-700 border-0"
+              >
                 Submit
               </Button>
             </Space>
@@ -237,7 +281,11 @@ const MyVisits = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Please enter title" />
+                    <Input
+                      prefix={<FileTextOutlined className="text-gray-400" />}
+                      placeholder="Please enter title"
+                      className="rounded-md"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -253,10 +301,26 @@ const MyVisits = () => {
                       },
                     ]}
                   >
-                    <Select placeholder="Please select status">
-                      <Option value="Scheduled">Scheduled</Option>
-                      <Option value="Ongoing">Ongoing</Option>
-                      <Option value="Completed">Completed</Option>
+                    <Select
+                      placeholder="Please select status"
+                      className="rounded-md"
+                      suffixIcon={
+                        <CaretDownOutlined className="text-gray-400" />
+                      }
+                      dropdownStyle={{ borderRadius: "8px" }}
+                    >
+                      <Option value="Scheduled">
+                        <CalendarOutlined className="mr-2 text-blue-500" />{" "}
+                        Scheduled
+                      </Option>
+                      <Option value="Ongoing">
+                        <SyncOutlined spin className="mr-2 text-purple-500" />{" "}
+                        Ongoing
+                      </Option>
+                      <Option value="Completed">
+                        <CheckCircleOutlined className="mr-2 text-green-500" />{" "}
+                        Completed
+                      </Option>
                     </Select>
                   </Form.Item>
                 </Col>
@@ -276,6 +340,10 @@ const MyVisits = () => {
                     <DatePicker
                       placeholder="Select date of visit"
                       style={{ width: "100%" }}
+                      className="rounded-md"
+                      suffixIcon={
+                        <CalendarOutlined className="text-gray-400" />
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -297,6 +365,8 @@ const MyVisits = () => {
                       type="number"
                       placeholder="Enter amount per hour"
                       min={0}
+                      prefix={<DollarOutlined className="text-gray-400" />}
+                      className="rounded-md"
                     />
                   </Form.Item>
                 </Col>
@@ -318,6 +388,10 @@ const MyVisits = () => {
                       placeholder="Select visit time"
                       style={{ width: "100%" }}
                       format="HH:mm"
+                      className="rounded-md"
+                      suffixIcon={
+                        <ClockCircleOutlined className="text-gray-400" />
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -337,6 +411,10 @@ const MyVisits = () => {
                       placeholder="Select end time"
                       style={{ width: "100%" }}
                       format="HH:mm"
+                      className="rounded-md"
+                      suffixIcon={
+                        <ClockCircleOutlined className="text-gray-400" />
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -352,7 +430,11 @@ const MyVisits = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Please enter address" />
+                    <Input
+                      placeholder="Please enter address"
+                      prefix={<EnvironmentOutlined className="text-gray-400" />}
+                      className="rounded-md"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -372,6 +454,10 @@ const MyVisits = () => {
                       placeholder="Select start time"
                       style={{ width: "100%" }}
                       format="HH:mm"
+                      className="rounded-md"
+                      suffixIcon={
+                        <ClockCircleOutlined className="text-gray-400" />
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -391,6 +477,10 @@ const MyVisits = () => {
                       placeholder="Select end time"
                       style={{ width: "100%" }}
                       format="HH:mm"
+                      className="rounded-md"
+                      suffixIcon={
+                        <ClockCircleOutlined className="text-gray-400" />
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -408,8 +498,9 @@ const MyVisits = () => {
                     ]}
                   >
                     <Input.TextArea
-                      rows={4} // You can adjust the number of rows as needed
+                      rows={4}
                       placeholder="Please enter description"
+                      className="rounded-md"
                     />
                   </Form.Item>
                 </Col>
@@ -420,117 +511,200 @@ const MyVisits = () => {
 
         <Row className="mt-5">
           <Col xl="4">
-            <Card className="shadow">
-              <CardHeader className="border-0">
+            <Card className="shadow-md rounded-lg overflow-hidden border-0">
+              <CardHeader className="border-0 bg-gradient-to-r from-blue-50 to-indigo-50">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0"> Assigned Visits</h3>
+                    <h3 className="mb-0 font-semibold flex items-center">
+                      <CalendarOutlined className="mr-2 text-blue-500" />{" "}
+                      Assigned Visits
+                    </h3>
                   </div>
-                  <Button color="success" onClick={showDrawer} variant="dashed">
+                  <Button
+                    onClick={showDrawer}
+                    type="primary"
+                    className="bg-emerald-600 hover:bg-emerald-700 rounded-full border-0 flex items-center"
+                    icon={<PlusOutlined />}
+                  >
                     Add Visit
                   </Button>
                 </Row>
                 <Row className="align-items-center">
                   <div className="col mt-4">
-                    <h3 className="mb-0" style={{ color: "red" }}>
-                      8 Required
+                    <h3 className="mb-0 font-medium flex items-center text-red-500">
+                      <WarningOutlined className="mr-2" /> 8 Required
                     </h3>
                   </div>
                 </Row>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
+              <Table
+                className="align-items-center table-flush"
+                responsive
+                pagination={false}
+                rowClassName="hover:bg-gray-50 transition-colors"
+              >
+                <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col">Description</th>
-                    <th scope="col"> Carers</th>
-                    <th scope="col"> Client</th>
+                    <th scope="col" className="font-medium">
+                      Description
+                    </th>
+                    <th scope="col" className="font-medium">
+                      Carers
+                    </th>
+                    <th scope="col" className="font-medium">
+                      Client
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th scope="row">Cleaning the Patient</th>
-                    <td>2 Carers</td>
-                    <td>Peter</td>
+                    <th scope="row" className="font-normal flex items-center">
+                      <MedicineBoxOutlined className="mr-2 text-teal-500" />{" "}
+                      Cleaning the Patient
+                    </th>
+                    <td className="flex items-center">
+                      <TeamOutlined className="mr-2 text-blue-500" /> 2 Carers
+                    </td>
+                    <td className="flex items-center">
+                      <UserOutlined className="mr-2 text-purple-500" /> Peter
+                    </td>
                   </tr>
                   <tr>
-                    <th scope="row">Give Medication</th>
-                    <td>1 Carer</td>
-                    <td>Trymore</td>
+                    <th scope="row" className="font-normal flex items-center">
+                      <MedicineBoxOutlined className="mr-2 text-teal-500" />{" "}
+                      Give Medication
+                    </th>
+                    <td className="flex items-center">
+                      <UserOutlined className="mr-2 text-blue-500" /> 1 Carer
+                    </td>
+                    <td className="flex items-center">
+                      <UserOutlined className="mr-2 text-purple-500" /> Trymore
+                    </td>
                   </tr>
                   <tr>
-                    <th scope="row">Food Preparation</th>
-                    <td>2 Carer</td>
-                    <td>Gift</td>
+                    <th scope="row" className="font-normal flex items-center">
+                      <CoffeeOutlined className="mr-2 text-teal-500" /> Food
+                      Preparation
+                    </th>
+                    <td className="flex items-center">
+                      <TeamOutlined className="mr-2 text-blue-500" /> 2 Carers
+                    </td>
+                    <td className="flex items-center">
+                      <UserOutlined className="mr-2 text-purple-500" /> Gift
+                    </td>
                   </tr>
                 </tbody>
               </Table>
             </Card>
-            <Card className="shadow mt-3">
-              <CardHeader className="border-0">
+            <Card className="shadow-md mt-3 rounded-lg overflow-hidden border-0">
+              <CardHeader className="border-0 bg-gradient-to-r from-green-50 to-teal-50">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">Finished Visits</h3>
+                    <h3 className="mb-0 font-semibold flex items-center">
+                      <CheckCircleOutlined className="mr-2 text-green-500" />{" "}
+                      Finished Visits
+                    </h3>
                   </div>
                 </Row>
               </CardHeader>
 
-              <div className="pl-3 mb-3">
-                <h4 className="mb-1">Required Hours: 1435h.35m</h4>
-                <h4 className="mb-1">Booked Hours: 543h.32m</h4>
-                <h4 className="mb-1">Carers working this week: 7</h4>
-                <h4 className="mb-1">Number of active carers: 23</h4>
-                <h4 className="mb-2">Number of active carers: 23</h4>
-                <h4 className="mb-1" style={{ color: "blue" }}>
-                  View All
+              <div className="pl-4 py-3">
+                <h4 className="mb-2 flex items-center text-gray-700">
+                  <ClockCircleOutlined className="mr-2 text-amber-500" />{" "}
+                  Required Hours:
+                  <span className="ml-2 font-semibold">1435h.35m</span>
+                </h4>
+                <h4 className="mb-2 flex items-center text-gray-700">
+                  <ScheduleOutlined className="mr-2 text-blue-500" /> Booked
+                  Hours:
+                  <span className="ml-2 font-semibold">543h.32m</span>
+                </h4>
+                <h4 className="mb-2 flex items-center text-gray-700">
+                  <TeamOutlined className="mr-2 text-purple-500" /> Carers
+                  working this week:
+                  <span className="ml-2 font-semibold">7</span>
+                </h4>
+                <h4 className="mb-2 flex items-center text-gray-700">
+                  <UserSwitchOutlined className="mr-2 text-green-500" /> Number
+                  of active carers:
+                  <span className="ml-2 font-semibold">23</span>
+                </h4>
+                <h4 className="mb-3 mt-3">
+                  <Button
+                    type="link"
+                    className="p-0 flex items-center text-blue-500 hover:text-blue-700"
+                  >
+                    <UnorderedListOutlined className="mr-1" /> View All
+                  </Button>
                 </h4>
               </div>
             </Card>
           </Col>
           <Col className="mb-5 mb-xl-0" xl="8">
-            <Card className="shadow">
-              <CardHeader className="border-0">
+            <Card className="shadow-md rounded-lg overflow-hidden border-0">
+              <CardHeader className="border-0 bg-gradient-to-r from-indigo-50 to-purple-50">
                 <Row className="align-items-center">
                   <div className="col">
-                    <h3 className="mb-0">All Visits</h3>
+                    <h3 className="mb-0 font-semibold flex items-center">
+                      <AppstoreOutlined className="mr-2 text-indigo-500" /> All
+                      Visits
+                    </h3>
                   </div>
                 </Row>
               </CardHeader>
-              <Row className="align-items-center pl-4 pr-4">
+              <Row className="align-items-center px-4 py-3 border-b border-gray-100">
                 <div className="col">
-                  <h4 className="mb-0" style={{ color: "blue" }}>
-                    Search visit{" "}
+                  <h4 className="mb-0 flex items-center text-blue-500">
+                    <SearchOutlined className="mr-1" /> Search visit
                   </h4>
                 </div>
                 <div className="col text-right">
                   <Search
                     placeholder="10:20 - 11:30"
-                    enterButton="Go"
+                    enterButton={
+                      <Button type="primary" icon={<SearchOutlined />}>
+                        Go
+                      </Button>
+                    }
                     size="large"
                     suffix={suffix}
                     onSearch={onSearch}
+                    className="rounded-lg overflow-hidden"
                   />
                 </div>
               </Row>
 
-              <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
+              <Table
+                className="align-items-center table-flush"
+                responsive
+                rowClassName="hover:bg-gray-50 transition-colors"
+              >
+                <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col">Location</th>
-                    <th scope="col">Date of Visit</th>
-                    <th scope="col">Visit Status</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Start Time</th>
-                    <th scope="col">End Time</th>
+                    <th scope="col" className="font-medium">
+                      Location
+                    </th>
+                    <th scope="col" className="font-medium">
+                      Date of Visit
+                    </th>
+                    <th scope="col" className="font-medium">
+                      Visit Status
+                    </th>
 
-                    <th scope="col">Action</th>
+                    <th scope="col" className="font-medium">
+                      Start Time
+                    </th>
+                    {/* <th scope="col" className="font-medium">
+                      End Time
+                    </th> */}
+                    <th scope="col" className="font-medium">
+                      Action
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="bg-violet">
+                <tbody>
                   {visitloading ? (
                     <tr>
-                      <td>
-                        <CustomSkeleton height="200px" width="100%" />
-                      </td>
                       <td>
                         <CustomSkeleton height="200px" width="100%" />
                       </td>
@@ -552,79 +726,107 @@ const MyVisits = () => {
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td>Error: {error}</td>
+                      <td colSpan={7} className="text-center py-4">
+                        <Alert
+                          message="Error"
+                          description={error}
+                          type="error"
+                          showIcon
+                        />
+                      </td>
                     </tr>
                   ) : visits.length > 0 ? (
                     visits.map((visit) => (
                       <tr key={visit._id} style={{ cursor: "pointer" }}>
                         <th scope="row">
-                          <div>{visit.location.address}</div>
-                        </th>
-                        <th scope="row">
-                          <div>{visit.DateOfVisit}</div>
-                        </th>
-                        <th scope="row">
-                          <div
-                            style={{
-                              color:
-                                visit.status === "Scheduled"
-                                  ? "blue"
-                                  : visit.status === "Ongoing"
-                                  ? "purple"
-                                  : visit.status === "Completed"
-                                  ? "green"
-                                  : "inherit",
-                            }}
-                          >
-                            {visit.status}
+                          <div className="flex items-center">
+                            <EnvironmentOutlined className="mr-2 text-red-500" />
+                            {visit.location.address}
                           </div>
                         </th>
                         <th scope="row">
-                          <div>{visit.description}</div>
+                          <div className="flex items-center">
+                            <CalendarOutlined className="mr-2 text-blue-500" />
+                            {visit.DateOfVisit}
+                          </div>
                         </th>
                         <th scope="row">
-                          <div>{visit.startTime}</div>
-                        </th>
-                        <th scope="row">
-                          <div>{visit.endTime}</div>
+                          <div
+                            className="flex items-center px-2 py-1 rounded-full"
+                            style={{
+                              color: "white",
+                              backgroundColor:
+                                visit.status === "Scheduled"
+                                  ? "#3B82F6"
+                                  : visit.status === "Ongoing"
+                                  ? "#8B5CF6"
+                                  : visit.status === "Completed"
+                                  ? "#10B981"
+                                  : "#6B7280",
+                            }}
+                          >
+                            {visit.status === "Scheduled" && (
+                              <CalendarOutlined className="mr-1" />
+                            )}
+                            {visit.status === "Ongoing" && (
+                              <SyncOutlined spin className="mr-1" />
+                            )}
+                            {visit.status === "Completed" && (
+                              <CheckCircleOutlined className="mr-1" />
+                            )}
+                            {visit.status}
+                          </div>
                         </th>
 
                         <th scope="row">
-                          <div className="row">
-                            <div className="mr-2">
-                              <PrimaryButton
-                                onClick={() => handleMoreDetails(visit)}
-                                title="View"
-                                color="success"
-                                variant="outlined"
-                              />
-                            </div>
+                          <div className="flex items-center">
+                            <ClockCircleOutlined className="mr-2 text-green-500" />
+                            {visit.startTime}
+                          </div>
+                        </th>
+                        {/* <th scope="row">
+                          <div className="flex items-center">
+                            <ClockCircleOutlined className="mr-2 text-red-500" />
+                            {visit.endTime}
+                          </div>
+                        </th> */}
 
-                            <div className="mr-2">
-                              <PrimaryButton
-                                title="Edit"
-                                color="primary"
-                                variant="outlined"
-                                onClick={() => handleOpenDrawer(visit)}
-                              />
-                            </div>
-                            <div></div>
-                            <div>
-                              <PrimaryButton
-                                title="Delete"
-                                color="danger"
-                                variant="outlined"
-                                onClick={() => handleDeleteClick(visit._id)}
-                              />
-                            </div>
+                        <th scope="row">
+                          <div className="flex space-x-2">
+                            <Button
+                              onClick={() => handleMoreDetails(visit)}
+                              type="primary"
+                              icon={<EyeOutlined />}
+                              className="bg-green-500 hover:bg-green-600 border-0 rounded-md"
+                            >
+                              View
+                            </Button>
+                            <Button
+                              type="primary"
+                              icon={<EditOutlined />}
+                              className="bg-blue-500 hover:bg-blue-600 border-0 rounded-md"
+                              onClick={() => handleOpenDrawer(visit)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              type="primary"
+                              danger
+                              icon={<DeleteOutlined />}
+                              className="rounded-md"
+                              onClick={() => handleDeleteClick(visit._id)}
+                            >
+                              Delete
+                            </Button>
                           </div>
                         </th>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td>
-                        <CustomNoData width="70px" height="70px" />
+                      <td colSpan={7} className="text-center py-8">
+                        <CustomNoData width="100px" height="100px" />
+                        <p className="mt-3 text-gray-500">No visits found</p>
                       </td>
                     </tr>
                   )}
@@ -644,16 +846,28 @@ const MyVisits = () => {
                 visit={selectedVisit}
               />
               <Modal
-                title="Delete Visit"
+                title={
+                  <span className="flex items-center text-red-500">
+                    <ExclamationCircleOutlined className="mr-2" /> Delete Visit
+                  </span>
+                }
                 visible={isDeleteModalOpen}
                 onOk={handleConfirmDelete}
                 onCancel={() => setIsDeleteModalOpen(false)}
                 okText="Delete"
-                okButtonProps={{ danger: true }}
+                okButtonProps={{ danger: true, icon: <DeleteOutlined /> }}
+                cancelButtonProps={{ icon: <CloseOutlined /> }}
+                className="rounded-lg overflow-hidden"
               >
                 {deleteloading && <CustomSpin />}
                 {!deleteloading && (
-                  <p>Are you sure you want to delete this visit?</p>
+                  <Alert
+                    message="Warning"
+                    description="Are you sure you want to delete this visit? This action cannot be undone."
+                    type="warning"
+                    showIcon
+                    className="mb-4"
+                  />
                 )}
               </Modal>
             </Card>

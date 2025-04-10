@@ -151,6 +151,7 @@ const MyPharmacy = () => {
       setImageUrl(publicData.publicUrl);
     }
   };
+  // console.log(imageUrl);
 
   const handleOpenDrawer = (pharmacy) => {
     setSelectedPharmacy(pharmacy);
@@ -170,15 +171,15 @@ const MyPharmacy = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPharmacyId, setSelectedPharmacyId] = useState(null);
 
-  const handleDeleteClick = (visitId) => {
-    setSelectedPharmacyId(visitId);
+  const handleDeleteClick = (pharmacyId) => {
+    setSelectedPharmacyId(pharmacyId);
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     try {
       setDeleteLoading(true);
-      await PharmacyService.deleteVisitById(selectedPharmacyId);
+      await PharmacyService.deletePharmacyById(selectedPharmacyId);
       showMessage("success", "Pharmacy successfully deleted!");
       setPharmacy((prevPharmacies) =>
         prevPharmacies.filter((pharmacy) => pharmacy._id !== selectedPharmacyId)
@@ -247,7 +248,7 @@ const MyPharmacy = () => {
           email: values.email,
           website: values.website,
         },
-        logoImage: values.imageUrl,
+        logoImage: imageUrl,
         openingHours: {
           monday: values.openingHours.monday,
           tuesday: values.openingHours.tuesday,

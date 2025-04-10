@@ -1,261 +1,267 @@
 // VisitDetailsModal.js
-import React, { useEffect } from "react";
-import { Modal, Form, Row, Col, Divider } from "antd";
+import React from "react";
+import {
+  Modal,
+  Badge,
+  Row,
+  Col,
+  Divider,
+  Avatar,
+  Card,
+  Typography,
+} from "antd";
 import { Tabs } from "antd";
 import TasksTab from "../carer_template/task_tab";
-import moment from "moment";
 import ObservationsTab from "../carer_template/observation_tab";
 import MedicationTab from "../carer_template/medicatio_tab";
+import {
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  CalendarOutlined,
+  UserOutlined,
+  PhoneOutlined,
+  HomeOutlined,
+  DollarOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 
-const DescriptionItem = ({ title, content }) => (
-  <div className="site-description-item-profile-wrapper">
-    <p className="site-description-item-profile-p-label">{title}:</p>
-    {content}
-  </div>
-);
-const onChange = (key) => {
-  console.log(key);
-};
+const { Title, Text } = Typography;
+
 const VisitDetailsModal = ({
   openvisitdetails,
   setOpenVisitDetails,
   visit,
 }) => {
-  const [form] = Form.useForm();
+  // Map status to color
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "completed":
+        return "success";
+      case "scheduled":
+        return "processing";
+      case "pending":
+        return "warning";
+      case "cancelled":
+        return "error";
+      default:
+        return "default";
+    }
+  };
 
-  console.log("my selected visit", visit._id);
+  // Format time for display
+  const formatTime = (time) => {
+    return time || "Not specified";
+  };
+
+  const InfoItem = ({ icon, label, value }) => (
+    <div
+      className="info-item"
+      style={{
+        marginBottom: "12px",
+        display: "flex",
+        alignItems: "flex-start",
+      }}
+    >
+      {icon && (
+        <div style={{ marginRight: "8px", color: "#1890ff" }}>{icon}</div>
+      )}
+      <div>
+        <Text
+          type="secondary"
+          style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
+        >
+          {label}
+        </Text>
+        <Text strong style={{ fontSize: "15px" }}>
+          {value || "Not specified"}
+        </Text>
+      </div>
+    </div>
+  );
+
+  const PersonCard = ({ title, person, personType }) => (
+    <Card
+      className="person-card"
+      bordered={false}
+      style={{
+        borderRadius: "8px",
+        background: personType === "client" ? "#f0f7ff" : "#f6f0ff",
+        marginBottom: "20px",
+      }}
+    >
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
+      >
+        <Avatar
+          size={48}
+          icon={<UserOutlined />}
+          style={{
+            backgroundColor: personType === "client" ? "#1890ff" : "#722ed1",
+            marginRight: "12px",
+          }}
+        />
+        <div>
+          <Title level={4} style={{ margin: 0 }}>
+            {title}
+          </Title>
+          <Text>
+            {person?.firstName} {person?.lastName}
+          </Text>
+        </div>
+      </div>
+
+      <Row gutter={[16, 16]}>
+        <Col span={12}>
+          <InfoItem
+            icon={<PhoneOutlined />}
+            label="Contact Number"
+            value={person?.contactNumber}
+          />
+        </Col>
+        <Col span={12}>
+          <InfoItem
+            icon={<HomeOutlined />}
+            label="Address"
+            value={person?.address}
+          />
+        </Col>
+        <Col span={12}>
+          {personType === "client" ? (
+            <InfoItem label="Gender" value={person?.gender} />
+          ) : (
+            <InfoItem label="Specialization" value={person?.specialization} />
+          )}
+        </Col>
+      </Row>
+    </Card>
+  );
+
+  const onChange = (key) => {
+    console.log(key);
+  };
 
   return (
     <Modal
-      title="View Visit"
+      title={
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span style={{ fontSize: "18px", fontWeight: "500" }}>
+            Visit Details
+          </span>
+          {visit?.status && (
+            <Badge
+              status={getStatusColor(visit.status)}
+              text={<Text strong>{visit.status}</Text>}
+            />
+          )}
+        </div>
+      }
       centered
       open={openvisitdetails}
       onOk={() => setOpenVisitDetails(false)}
       onCancel={() => setOpenVisitDetails(false)}
-      width={1100}
-      height={800}
-      maskStyle={{
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust overlay
-      }}
+      width={900}
+      footer={null}
       bodyStyle={{
-        padding: 24, // Adjust internal padding
-        backgroundColor: "#fff", // Ensure white background
+        padding: "24px",
+        maxHeight: "80vh",
+        overflow: "auto",
+      }}
+      style={{
+        borderRadius: "12px",
+        overflow: "hidden",
       }}
     >
       {visit ? (
         <Tabs
           defaultActiveKey="1"
+          type="card"
+          size="large"
+          onChange={onChange}
           items={[
             {
               key: "1",
               label: "Details",
               children: (
-                <div>
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Location:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.location.address}
-                      </h3>
-                    </div>
-                  </Row>
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Date of visit:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.DateOfVisit}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Start Time:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.startTime}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        End Time:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.endTime}
-                      </h3>
-                    </div>
-                  </Row>
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Status:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.status}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Amount Paid Per Hour:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.amount_paid_per_hou}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Row className="mr-8">
-                    <div>
-                      <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                        Description:
-                      </h3>
-                    </div>
-                    <div>
-                      <h3 className="mb-0" style={{ color: "grey" }}>
-                        {visit.description}
-                      </h3>
-                    </div>
-                  </Row>
-
-                  <Divider />
-
-                  <div>
-                    <h3 className="mb-0">Client</h3>
-                  </div>
-
-                  <div className="row ml-1">
-                    <Row className="mr-8">
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Full Name:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.clientId.firstName}
-                        </h3>
-                      </div>
+                <div style={{ padding: "16px 0" }}>
+                  <Card
+                    bordered={false}
+                    style={{
+                      borderRadius: "8px",
+                      background:
+                        "linear-gradient(145deg, #f0f5ff 0%, #e6f7ff 100%)",
+                      marginBottom: "24px",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+                    }}
+                  >
+                    <Row gutter={[24, 16]}>
+                      <Col xs={24} sm={12}>
+                        <InfoItem
+                          icon={<EnvironmentOutlined />}
+                          label="Location"
+                          value={visit.location?.address}
+                        />
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <InfoItem
+                          icon={<CalendarOutlined />}
+                          label="Date of Visit"
+                          value={visit.DateOfVisit}
+                        />
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <InfoItem
+                          icon={<ClockCircleOutlined />}
+                          label="Start Time"
+                          value={formatTime(visit.startTime)}
+                        />
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <InfoItem
+                          icon={<ClockCircleOutlined />}
+                          label="End Time"
+                          value={formatTime(visit.endTime)}
+                        />
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <InfoItem
+                          icon={<DollarOutlined />}
+                          label="Amount Paid Per Hour"
+                          value={visit.amount_paid_per_hou}
+                        />
+                      </Col>
+                      <Col span={24}>
+                        <InfoItem
+                          icon={<FileTextOutlined />}
+                          label="Description"
+                          value={visit.description}
+                        />
+                      </Col>
                     </Row>
-                    <Row>
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Contact Number:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.clientId.contactNumber}
-                        </h3>
-                      </div>
-                    </Row>
-                  </div>
+                  </Card>
 
-                  <div className="row ml-1">
-                    <Row className="mr-8">
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Address:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.clientId.address}
-                        </h3>
-                      </div>
-                    </Row>
-                    <Row>
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Gender:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.clientId.gender}
-                        </h3>
-                      </div>
-                    </Row>
-                  </div>
+                  <Divider orientation="left">
+                    <span style={{ fontSize: "16px", fontWeight: 500 }}>
+                      People Involved
+                    </span>
+                  </Divider>
 
-                  <Divider />
-                  <div>
-                    <h3 className="mb-0">Carer</h3>
-                  </div>
-                  <div className="row ml-1">
-                    <Row className="mr-8">
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          First Name:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.careProfessionalId.firstName}
-                        </h3>
-                      </div>
-                    </Row>
-                    <Row>
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Contact Number:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.careProfessionalId.contactNumber}
-                        </h3>
-                      </div>
-                    </Row>
-                  </div>
-                  <div className="row ml-1">
-                    <Row className="mr-8">
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Address:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.careProfessionalId.address}
-                        </h3>
-                      </div>
-                    </Row>
-                    <Row>
-                      <div>
-                        <h3 className="mb-0 mr-5" style={{ color: "grey" }}>
-                          Specialization:
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 className="mb-0" style={{ color: "grey" }}>
-                          {visit.careProfessionalId.specialization}
-                        </h3>
-                      </div>
-                    </Row>
-                  </div>
+                  <PersonCard
+                    title="Client"
+                    person={visit.clientId}
+                    personType="client"
+                  />
+
+                  <PersonCard
+                    title="Carer Professional"
+                    person={visit.careProfessionalId}
+                    personType="carer"
+                  />
                 </div>
               ),
             },
@@ -268,9 +274,22 @@ const VisitDetailsModal = ({
               key: "3",
               label: "Care Teams",
               children: (
-                <div>
-                  <p>This is the first text in Tab 3.</p>
-                  <p>This is the second text in Tab 3.</p>
+                <div
+                  className="care-teams-container"
+                  style={{ padding: "24px 0", textAlign: "center" }}
+                >
+                  <Card
+                    bordered={false}
+                    style={{
+                      borderRadius: "8px",
+                      background: "#f9f9f9",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    <Text type="secondary">
+                      Care Teams information will be displayed here
+                    </Text>
+                  </Card>
                 </div>
               ),
             },
@@ -285,10 +304,14 @@ const VisitDetailsModal = ({
               children: <MedicationTab visitId={visit._id} />,
             },
           ]}
-          onChange={onChange}
         />
       ) : (
-        <p>Loading visit details...</p>
+        <div style={{ textAlign: "center", padding: "32px" }}>
+          <div style={{ fontSize: "24px", marginBottom: "16px" }}>
+            <div className="loading-spinner" style={{ margin: "0 auto" }}></div>
+          </div>
+          <Text type="secondary">Loading visit details...</Text>
+        </div>
       )}
     </Modal>
   );
