@@ -21,7 +21,6 @@ import ClientService from "services/client_services/client_services";
 
 const { Option } = Select;
 
-
 const EditVisit = ({ open, onClose, visit }) => {
   const [form] = Form.useForm();
   const [addloading, setAddLoading] = useState(false);
@@ -33,7 +32,6 @@ const EditVisit = ({ open, onClose, visit }) => {
   const [clientloading, setClientLoading] = useState(true);
   const [errorClient, setErrorClient] = useState(null);
 
-
   useEffect(() => {
     if (visit) {
       form.setFieldsValue({
@@ -43,6 +41,8 @@ const EditVisit = ({ open, onClose, visit }) => {
           ? [moment(visit.WorkingTime[0]), moment(visit.WorkingTime[1])]
           : null,
         address: visit.location?.address || "",
+        client: visit.client?.firstName || "", // or use client._id if that's what's in the select value
+        employee: visit.employee?.firstName || "", // same here: use employee._id ideally
       });
     }
   }, [visit, form]);
@@ -64,8 +64,8 @@ const EditVisit = ({ open, onClose, visit }) => {
 
   useEffect(() => {
     const fetchClients = async () => {
-        console.log('services client calling');
-        
+      console.log("services client calling");
+
       try {
         const response = await ClientService.getAllClient();
         setClients(response.data || []);

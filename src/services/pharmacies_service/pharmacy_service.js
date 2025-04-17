@@ -20,11 +20,14 @@ const PharmacyService = {
 
   getPharmacyById: async (pharmacyId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/get/${pharmacyId}`, {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/get_pharmacy_by/${pharmacyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       throw error.response?.data || "Failed to retrieve pharmacy";
@@ -34,7 +37,7 @@ const PharmacyService = {
   postPharmacy: async (pharmacyData) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/create_pharmacy`,
+        `${BASE_URL}/create_pharmacies`,
         pharmacyData,
         {
           headers: {
@@ -73,15 +76,12 @@ const PharmacyService = {
 
   deletePharmacyById: async (pharmacyId) => {
     try {
-      const response = await axios.delete(
-        `${BASE_URL}/delete_pharmacy/${pharmacyId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${getAuthToken()}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}/${pharmacyId}`, {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error("Error deleting pharmacy:", error);

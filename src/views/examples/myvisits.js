@@ -32,6 +32,9 @@ import { AudioOutlined } from "@ant-design/icons";
 import { Input, Space } from "antd";
 import PrimaryButton from "components/buttons/primary_button";
 import VisitsService from "services/visits_service/visits_service";
+import AddCarerService from "services/carer_services/add_new_carer_service";
+import CarerService from "services/carer_services/carer_service";
+import ClientService from "services/client_services/client_services";
 import CustomSkeleton from "components/skeletons/custom_skeleton";
 import { useEffect, useState } from "react";
 import CustomNoData from "components/nodata/no_data";
@@ -103,6 +106,8 @@ const suffix = (
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const MyVisits = () => {
+  const [carers, setCarers] = useState([]);
+  const [clients, setClients] = useState([]);
   const [visits, setVisits] = useState([]);
   const [visitloading, setVisitLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -115,6 +120,48 @@ const MyVisits = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedVisit, setSelectedVisit] = useState(null);
   const [deleteloading, setDeleteLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedCarerid, setSelectedCarerid] = useState(null);
+
+  const handleSelectCarerid = (carerId) => {
+    setSelectedCarerid(carerId);
+  };
+
+  const [selectedClientid, setSelectedClientid] = useState(null);
+  const handleSelectClientid = (clientId) => {
+    setSelectedClientid(clientId);
+  };
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await ClientService.getAllClient();
+        setClients(response.data || []);
+      } catch (err) {
+        setError(err.message || "Error fetching clients");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
+  useEffect(() => {
+    const fetchCarers = async () => {
+      try {
+        const response = await CarerService.getAllCarers();
+        setCarers(response.data || []);
+      } catch (err) {
+        setError(err.message || "Error fetching carers");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarers();
+  }, []);
 
   const handleOpenDrawer = (visit) => {
     setSelectedVisit(visit);
@@ -196,8 +243,8 @@ const MyVisits = () => {
       console.log("adding visit");
 
       const visitData = {
-        clientId: "675eaa3279915a77996c8884",
-        careProfessionalId: "6763fbc6d9c0556eaea94214",
+        clientId: values.client,
+        careProfessionalId: values.carepro,
         DateOfVisit: "2024-12-15",
         amount_paid_per_hour: values.amount_paid_per_hour,
         startTime: values.startTime,
@@ -271,7 +318,7 @@ const MyVisits = () => {
             <Form layout="vertical" form={form} hideRequiredMark>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item
+                  {/* <Form.Item
                     name="title"
                     label="Title"
                     rules={[
@@ -286,9 +333,83 @@ const MyVisits = () => {
                       placeholder="Please enter title"
                       className="rounded-md"
                     />
+                  </Form.Item> */}
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="carepro"
+                    label="Select Care Professional"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a care professional",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select care professional"
+                      className="rounded-md"
+                      suffixIcon={
+                        <CaretDownOutlined className="text-gray-400" />
+                      }
+                      dropdownStyle={{ borderRadius: "8px" }}
+                      onChange={handleSelectCarerid}
+                      value={selectedCarerid}
+                    >
+                      {carers.map((item) => (
+                        <Option
+                          key={item._id}
+                          value={item._id}
+                          onClick={() => handleSelectCarerid(item._id)}
+                        >
+                          <UserOutlined className="mr-2 text-blue-500" />{" "}
+                          {item.firstName}
+                        </Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="client"
+                    label="Select Client"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a Client",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select client"
+                      className="rounded-md"
+                      suffixIcon={
+                        <CaretDownOutlined className="text-gray-400" />
+                      }
+                      dropdownStyle={{ borderRadius: "8px" }}
+                      onChange={handleSelectClientid}
+                      value={selectedClientid}
+                    >
+                      {clients.map((item) => (
+                        <Option
+                          key={item._id}
+                          value={item._id}
+                          onClick={() => handleSelectClientid(item._id)}
+                        >
+                          <UserOutlined className="mr-2 text-blue-500" />{" "}
+                          {item.firstName} {item.lastName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
@@ -325,6 +446,7 @@ const MyVisits = () => {
                   </Form.Item>
                 </Col>
               </Row>
+
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item

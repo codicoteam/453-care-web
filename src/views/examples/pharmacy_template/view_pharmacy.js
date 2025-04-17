@@ -31,7 +31,7 @@ import {
   CheckCircleOutlined,
   CustomerServiceOutlined,
 } from "@ant-design/icons";
-import MedicationTab from "../carer_template/medicatio_tab";
+import MedicineTab from "../pharmacy_template/medicine_tab";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -568,7 +568,7 @@ const PharmacyDetailsModal = ({
               <div
                 style={{ height: "60vh", overflow: "auto", padding: "24px" }}
               >
-                <MedicationTab visitId={pharmacy._id} />
+                <MedicineTab pharmacyId={pharmacy._id} />
               </div>
             ),
           },

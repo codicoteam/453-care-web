@@ -210,6 +210,24 @@ const MyPharmacy = () => {
     fetchpharmacies();
   }, []);
 
+  useEffect(() => {
+    const fetchmedicines = async () => {
+      console.log("print pharmacies");
+
+      try {
+        const response = await PharmacyService.getAllPharmacies();
+        console.log(response);
+        setPharmacy(response || []);
+      } catch (err) {
+        setError(err.message || "Error fetching pharmacies");
+      } finally {
+        setPharmacyLoading(false);
+      }
+    };
+
+    fetchmedicines();
+  }, []);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
